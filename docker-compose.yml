@@ -1,7 +1,7 @@
 services:
   kyc-service:
     build:
-      context: ./backend/kyc-service
+      context: ./backend/kyc_service
       dockerfile: Dockerfile
     container_name: fintech-kyc
     ports:
@@ -11,7 +11,7 @@ services:
       - STORAGE_PATH=/app/storage
       - REDIS_URL=redis://redis:6379/0
     volumes:
-      - ./backend/kyc-service:/app
+      - ./backend/kyc_service:/app
       - kyc-storage:/app/storage
       - /tmp:/tmp
     depends_on:
@@ -22,7 +22,7 @@ services:
 
   credit-score-service:
     build:
-      context: ./backend/credit-score-service
+      context: ./backend/credit_score_service
       dockerfile: Dockerfile
     container_name: fintech-credit
     ports:
@@ -31,7 +31,7 @@ services:
       - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
       - REDIS_URL=redis://redis:6379/0
     volumes:
-      - ./backend/credit-score-service:/app
+      - ./backend/credit_score_service:/app
       - credit-reports:/app/reports
     depends_on:
       - redis
@@ -41,7 +41,7 @@ services:
 
   upi-mandate-service:
     build:
-      context: ./backend/upi-mandate-service
+      context: ./backend/upi_mandate_service
       dockerfile: Dockerfile
     container_name: fintech-upi
     ports:
@@ -52,7 +52,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
-      - ./backend/upi-mandate-service:/app
+      - ./backend/upi_mandate_service:/app
     depends_on:
       - redis
     networks:
@@ -72,7 +72,7 @@ services:
 
   celery-worker:
     build:
-      context: ./backend/upi-mandate-service
+      context: ./backend/upi_mandate_service
       dockerfile: Dockerfile
     container_name: fintech-celery
     command: celery -A app.celery_app worker --loglevel=info
@@ -81,7 +81,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
-      - ./backend/upi-mandate-service:/app
+      - ./backend/upi_mandate_service:/app
     depends_on:
       - redis
       - upi-mandate-service
@@ -91,7 +91,7 @@ services:
 
   celery-beat:
     build:
-      context: ./backend/upi-mandate-service
+      context: ./backend/upi_mandate_service
       dockerfile: Dockerfile
     container_name: fintech-celery-beat
     command: celery -A app.celery_app beat --loglevel=info
@@ -100,7 +100,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
-      - ./backend/upi-mandate-service:/app
+      - ./backend/upi_mandate_service:/app
       - celery-beat-data:/var/run/celery
     depends_on:
       - redis

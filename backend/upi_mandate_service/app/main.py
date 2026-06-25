@@ -2,10 +2,28 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import mandates, retry, notifications
 
+import logging
+
+from contextlib import asynccontextmanager
+from app.database import Base, engine
+import app.models.models
+
+logger = logging.getLogger(__name__)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.warning(f"Could not initialize database tables (will retry on first request): {e}")
+    yield
+
 app = FastAPI(
     title="UPI Mandate Service",
     description="Mandate creation, retry engine, and pre-debit notifications",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(

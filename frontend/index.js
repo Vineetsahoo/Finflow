@@ -1,8 +1,8 @@
 // ===== API BASE URLs (BACKEND UNCHANGED) =====
 const API_BASE = {
-    kyc: 'http://localhost:8001/api/v1/kyc',
-    credit: 'http://localhost:8002/api/v1/credit',
-    upi: 'http://localhost:8003/api/v1/upi'
+    kyc: '/api/kyc',
+    credit: '/api/credit',
+    upi: '/api/upi'
 };
 const USER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 let mandates = [];
