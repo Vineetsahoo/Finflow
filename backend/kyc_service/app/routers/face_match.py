@@ -1,4 +1,6 @@
+# pyrefly: ignore [missing-import]
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
+# pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 import uuid
 import shutil
@@ -37,7 +39,7 @@ async def verify_face(
     temp_doc = f"/tmp/doc_photo_{file_id}.png"
     storage_service.download_file(doc.file_path, temp_doc)
 
-    match_result = face_service.verify_match(temp_doc, temp_doc)
+    match_result = face_service.verify_match(temp_doc, temp_selfie)
 
     verification = FaceVerification(
         user_id=user_id,
@@ -51,7 +53,7 @@ async def verify_face(
     db.commit()
     db.refresh(verification)
 
-    for f in [temp_doc]:
+    for f in [temp_doc, temp_selfie]:
         if os.path.exists(f):
             os.remove(f)
 
