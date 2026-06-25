@@ -1,4 +1,4 @@
-# FINFLOW — Fintech Platform (AWS-Free)
+# FINFLOW — Fintech Platform
 
 Three microservices on a single deployable platform with local storage.
 
