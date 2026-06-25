@@ -49,6 +49,10 @@ async def create_mandate(
         max_retries=max_retries
     )
 
+    validation_result = mandate_engine.validate_mandate(mandate)
+    if not validation_result["valid"]:
+        raise HTTPException(status_code=400, detail={"message": "Invalid mandate parameters", "errors": validation_result["errors"]})
+
     db.add(mandate)
     db.commit()
     db.refresh(mandate)
