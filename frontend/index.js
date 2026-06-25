@@ -4,8 +4,11 @@ const API_BASE = {
     credit: '/api/credit',
     upi: '/api/upi'
 };
+
+// ===== GLOBAL STATE =====
 const USER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 let mandates = [];
+let currentDocumentId = null;
 
 // ===== SCROLL HANDLING =====
 const scrollIndicator = document.getElementById('scrollIndicator');
@@ -87,32 +90,30 @@ async function uploadDocument() {
             method: 'POST',
             body: formData
         });
+        if (!response.ok) throw new Error('Upload failed');
         const data = await response.json();
         if (data.success) {
+            currentDocumentId = data.document_id;
             document.getElementById('progress-doc').style.width = '100%';
             extractOCR(data.document_id);
+        } else {
+            throw new Error(data.message || 'Upload failed');
         }
     } catch (error) {
-        document.getElementById('progress-doc').style.width = '100%';
-        setTimeout(() => extractOCR(1), 500);
+        alert('Failed to upload document: ' + error.message);
     }
 }
 
 async function extractOCR(documentId) {
     try {
         const response = await fetch(`${API_BASE.kyc}/documents/${documentId}/ocr`, { method: 'POST' });
+        if (!response.ok) throw new Error('OCR extraction failed');
         const data = await response.json();
         document.getElementById('progress-ocr').style.width = '100%';
         document.getElementById('ocr-result').style.display = 'block';
         document.getElementById('ocr-data').textContent = JSON.stringify(data.ocr_data, null, 2);
     } catch (error) {
-        document.getElementById('progress-ocr').style.width = '100%';
-        document.getElementById('ocr-result').style.display = 'block';
-        document.getElementById('ocr-data').textContent = JSON.stringify({
-            document_number: 'XXXX XXXX 7451',
-            name: 'Vineet Sahoo',
-            document_type: document.getElementById('doc-type').value
-        }, null, 2);
+        alert('Failed to extract OCR: ' + error.message);
     }
 }
 
@@ -121,11 +122,15 @@ function triggerSelfie() {
 }
 
 async function handleSelfie(event) {
+    if (!currentDocumentId) {
+        alert('Please upload a document first.');
+        return;
+    }
     const file = event.target.files[0];
     if (!file) return;
     const formData = new FormData();
     formData.append('user_id', USER_ID);
-    formData.append('document_id', '1');
+    formData.append('document_id', currentDocumentId);
     formData.append('selfie', file);
 
     try {
@@ -133,6 +138,7 @@ async function handleSelfie(event) {
             method: 'POST',
             body: formData
         });
+        if (!response.ok) throw new Error('Face match failed');
         const data = await response.json();
         document.getElementById('progress-face').style.width = '100%';
         document.getElementById('face-match-result').style.display = 'block';
@@ -145,18 +151,12 @@ async function handleSelfie(event) {
         if (data.is_match) {
             document.getElementById('kyc-status-badge').innerHTML = '<span class="status-dot"></span>VERIFIED';
             document.getElementById('kyc-status-badge').className = 'status-badge status-verified';
+        } else {
+            document.getElementById('kyc-status-badge').innerHTML = '<span class="status-dot"></span>FAILED';
+            document.getElementById('kyc-status-badge').className = 'status-badge status-declined';
         }
     } catch (error) {
-        document.getElementById('progress-face').style.width = '100%';
-        document.getElementById('face-match-result').style.display = 'block';
-        document.getElementById('face-match-result').innerHTML = `
-            <div style="padding: 20px; border-radius: 16px; border: 1px solid var(--success); background: rgba(90,122,74,0.1);">
-                <p class="body" style="color: var(--text-primary); font-weight: 600;">Match: VERIFIED</p>
-                <p class="caption" style="margin-top: 8px;">Confidence: 94.5%</p>
-            </div>
-        `;
-        document.getElementById('kyc-status-badge').innerHTML = '<span class="status-dot"></span>VERIFIED';
-        document.getElementById('kyc-status-badge').className = 'status-badge status-verified';
+        alert('Face match failed: ' + error.message);
     }
 }
 
@@ -179,29 +179,14 @@ async function computeCreditScore() {
     formData.append('credit_cards', cards);
 
     try {
-        await fetch(`${API_BASE.credit}/financial-data/submit`, { method: 'POST', body: formData });
+        const submitResponse = await fetch(`${API_BASE.credit}/financial-data/submit`, { method: 'POST', body: formData });
+        if (!submitResponse.ok) throw new Error('Failed to submit financial data');
         const scoreResponse = await fetch(`${API_BASE.credit}/score/compute/${USER_ID}`, { method: 'POST' });
+        if (!scoreResponse.ok) throw new Error('Failed to compute score');
         const scoreData = await scoreResponse.json();
         displayScore(scoreData);
     } catch (error) {
-        const demoScore = Math.max(300, Math.min(900, Math.floor(
-            (income / (expenses + 1)) * 200 + (tenure * 5) + 400
-        )));
-        displayScore({
-            score: demoScore,
-            rating: demoScore > 750 ? 'excellent' : demoScore > 650 ? 'good' : demoScore > 550 ? 'fair' : 'poor',
-            breakdown: {
-                payment_history: Math.min(100, (income / (expenses + 1)) * 50),
-                credit_utilization: 70,
-                credit_history: Math.min(100, tenure / 2),
-                credit_mix: 60,
-                new_credit: 80
-            },
-            recommendations: [
-                'Maintain stable employment to build longer credit history',
-                'Keep credit card utilization below 30% of your total limit'
-            ]
-        });
+        alert('Failed to compute credit score: ' + error.message);
     }
 }
 
@@ -254,22 +239,17 @@ async function createMandate() {
             method: 'POST',
             body: formData
         });
+        if (!response.ok) throw new Error('Failed to create mandate');
         const data = await response.json();
         if (data.success) {
             mandates.push(data);
             updateMandateList();
             updateMandateStats();
+        } else {
+            throw new Error(data.message || 'Failed to create mandate');
         }
     } catch (error) {
-        const demoMandate = {
-            mandate_id: 'MND-' + Math.random().toString(36).substr(2, 12).toUpperCase(),
-            status: 'active',
-            amount: parseFloat(document.getElementById('mandate-amount').value) || 0,
-            merchant_name: document.getElementById('merchant-name').value || 'Unknown'
-        };
-        mandates.push(demoMandate);
-        updateMandateList();
-        updateMandateStats();
+        alert('Failed to create mandate: ' + error.message);
     }
 }
 
@@ -301,9 +281,9 @@ function updateMandateStats() {
 // ===== HEALTH CHECK =====
 async function checkHealth() {
     const services = [
-        { name: 'kyc', url: `${API_BASE.kyc.split('/api')[0]}/health`, el: 'health-kyc' },
-        { name: 'credit', url: `${API_BASE.credit.split('/api')[0]}/health`, el: 'health-credit' },
-        { name: 'upi', url: `${API_BASE.upi.split('/api')[0]}/health`, el: 'health-upi' }
+        { name: 'kyc', url: `${API_BASE.kyc}/health`, el: 'health-kyc' },
+        { name: 'credit', url: `${API_BASE.credit}/health`, el: 'health-credit' },
+        { name: 'upi', url: `${API_BASE.upi}/health`, el: 'health-upi' }
     ];
 
     for (const svc of services) {
