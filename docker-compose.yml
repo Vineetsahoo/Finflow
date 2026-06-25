@@ -1,0 +1,136 @@
+services:
+  kyc-service:
+    build:
+      context: ./backend/kyc-service
+      dockerfile: Dockerfile
+    container_name: fintech-kyc
+    ports:
+      - "8001:8000"
+    environment:
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - STORAGE_PATH=/app/storage
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./backend/kyc-service:/app
+      - kyc-storage:/app/storage
+      - /tmp:/tmp
+    depends_on:
+      - redis
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  credit-score-service:
+    build:
+      context: ./backend/credit-score-service
+      dockerfile: Dockerfile
+    container_name: fintech-credit
+    ports:
+      - "8002:8000"
+    environment:
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./backend/credit-score-service:/app
+      - credit-reports:/app/reports
+    depends_on:
+      - redis
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  upi-mandate-service:
+    build:
+      context: ./backend/upi-mandate-service
+      dockerfile: Dockerfile
+    container_name: fintech-upi
+    ports:
+      - "8003:8000"
+    environment:
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ./backend/upi-mandate-service:/app
+    depends_on:
+      - redis
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: fintech-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  celery-worker:
+    build:
+      context: ./backend/upi-mandate-service
+      dockerfile: Dockerfile
+    container_name: fintech-celery
+    command: celery -A app.celery_app worker --loglevel=info
+    environment:
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ./backend/upi-mandate-service:/app
+    depends_on:
+      - redis
+      - upi-mandate-service
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  celery-beat:
+    build:
+      context: ./backend/upi-mandate-service
+      dockerfile: Dockerfile
+    container_name: fintech-celery-beat
+    command: celery -A app.celery_app beat --loglevel=info
+    environment:
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ./backend/upi-mandate-service:/app
+      - celery-beat-data:/var/run/celery
+    depends_on:
+      - redis
+      - upi-mandate-service
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    container_name: fintech-frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - kyc-service
+      - credit-score-service
+      - upi-mandate-service
+    networks:
+      - fintech-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  celery-beat-data:
+  kyc-storage:
+  credit-reports:
+
+networks:
+  fintech-network:
+    driver: bridge

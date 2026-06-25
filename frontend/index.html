@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINFLOW — Fintech Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">FINFLOW</a>
+        <div class="nav-links">
+            <a href="#kyc" class="nav-link">KYC</a>
+            <a href="#credit" class="nav-link">Credit</a>
+            <a href="#upi" class="nav-link">UPI</a>
+            <a href="#dashboard" class="nav-link">Monitor</a>
+        </div>
+    </nav>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <span class="caption">Scroll</span>
+        <div class="line"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80');"></div>
+        <div class="bg-img-overlay-strong"></div>
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-label">
+                <span class="caption">Fintech Infrastructure</span>
+            </div>
+            <h1 class="hero-title display-xl">
+                <span class="line"><span>Unified</span></span>
+                <span class="line"><span>Financial</span></span>
+                <span class="line"><span>Engine</span></span>
+            </h1>
+            <p class="hero-desc body-lg">
+                KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.
+            </p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="scrollToSection('kyc')">
+                    Explore Platform
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+                <button class="btn-secondary" onclick="scrollToSection('dashboard')">
+                    API Documentation
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- KYC Service Section -->
+    <section class="section" id="kyc">
+        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?w=1920&q=80');"></div>
+        <div class="bg-img-overlay"></div>
+        <div class="ambient-glow" style="top: -200px; right: -200px;"></div>
+        <div class="section-inner">
+            <div class="grid-2">
+                <div>
+                    <span class="num-badge">01 / KYC Service</span>
+                    <h2 class="display-lg" style="margin-bottom: 24px;">Identity<br>Verification</h2>
+                    <p class="body-lg" style="margin-bottom: 40px; max-width: 440px;">
+                        Document upload with OCR extraction, face verification using DeepFace, and complete audit trail. Supports Aadhaar, PAN, Passport, and Driving License.
+                    </p>
+
+                    <!-- Status Panel -->
+                    <div class="surface" style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <span class="caption">Verification Status</span>
+                            <span class="status-badge status-pending" id="kyc-status-badge">
+                                <span class="status-dot"></span>Pending
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 16px; margin-bottom: 8px;">
+                            <div style="flex: 1;">
+                                <div class="progress-track"><div class="progress-fill" id="progress-doc" style="width: 0%;"></div></div>
+                                <p class="caption" style="margin-top: 10px;">Document</p>
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="progress-track"><div class="progress-fill" id="progress-ocr" style="width: 0%;"></div></div>
+                                <p class="caption" style="margin-top: 10px;">OCR</p>
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="progress-track"><div class="progress-fill" id="progress-face" style="width: 0%;"></div></div>
+                                <p class="caption" style="margin-top: 10px;">Face Match</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 24px;">
+                        <button class="btn-ghost" onclick="showKycDocs()">View Documents</button>
+                        <button class="btn-ghost" onclick="showKycVerifications()">Verifications</button>
+                    </div>
+                </div>
+
+                <!-- Upload Interface -->
+                <div>
+                    <div class="surface">
+                        <h3 class="heading" style="margin-bottom: 28px;">Upload Document</h3>
+
+                        <div style="margin-bottom: 20px;">
+                            <label class="input-label">Document Type</label>
+                            <select class="input-select" id="doc-type">
+                                <option value="">Select type</option>
+                                <option value="aadhaar">Aadhaar Card</option>
+                                <option value="pan">PAN Card</option>
+                                <option value="passport">Passport</option>
+                                <option value="driving_license">Driving License</option>
+                            </select>
+                        </div>
+
+                        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('doc-file').click()">
+                            <input type="file" id="doc-file" style="display: none;" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="margin-bottom: 16px; opacity: 0.4;">
+                                <path d="M20 8v24M8 20h24" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            <p class="body" style="color: var(--text-secondary); margin-bottom: 8px;">Drop document here or click to browse</p>
+                            <p class="caption">JPG, PNG, PDF up to 10MB</p>
+                        </div>
+
+                        <div id="upload-preview" style="display: none; margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--bg-tertiary); border-radius: 12px;">
+                                <span class="body" id="filename" style="color: var(--text-primary);"></span>
+                                <button class="btn-primary" style="padding: 10px 20px; font-size: 12px;" onclick="uploadDocument()">Upload</button>
+                            </div>
+                        </div>
+
+                        <div id="ocr-result" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                            <span class="num-badge">OCR Extracted Data</span>
+                            <pre id="ocr-data" class="body" style="color: var(--text-primary); font-family: inherit; white-space: pre-wrap; background: var(--bg-tertiary); padding: 20px; border-radius: 12px;"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Face Verification -->
+                    <div class="surface" style="margin-top: 20px;">
+                        <h3 class="heading" style="margin-bottom: 16px; font-size: 18px;">Face Verification</h3>
+                        <p class="body" style="margin-bottom: 20px;">Upload a selfie to match against your document photo.</p>
+                        <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="triggerSelfie()">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                            Take Selfie
+                        </button>
+                        <input type="file" id="selfie-file" style="display: none;" accept="image/*" onchange="handleSelfie(event)">
+                        <div id="face-match-result" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Credit Score Section -->
+    <section class="section" id="credit">
+        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');"></div>
+        <div class="bg-img-overlay"></div>
+        <div class="ambient-glow" style="bottom: -200px; left: -200px; background: radial-gradient(circle, rgba(90,122,74,0.1) 0%, transparent 70%);"></div>
+        <div class="section-inner">
+            <div class="grid-2">
+                <div>
+                    <span class="num-badge">02 / Credit Score</span>
+                    <h2 class="display-lg" style="margin-bottom: 24px;">Credit<br>Assessment</h2>
+                    <p class="body-lg" style="margin-bottom: 48px; max-width: 440px;">
+                        Financial data intake, CIBIL-style score computation with weighted breakdown, and comprehensive reporting with recommendations.
+                    </p>
+
+                    <!-- Score Display -->
+                    <div style="display: flex; align-items: center; gap: 48px; margin-bottom: 48px;">
+                        <div class="score-ring">
+                            <div style="text-align: center;">
+                                <p class="display-md" id="credit-score-value" style="color: var(--text-primary); font-weight: 800;">—</p>
+                                <p class="caption" style="margin-top: 8px;">Out of 900</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="caption" style="margin-bottom: 8px;">Rating</p>
+                            <p class="display-md" id="credit-rating" style="color: var(--text-primary); font-size: 32px;">Not computed</p>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown -->
+                    <div id="score-breakdown" style="display: none;">
+                        <p class="caption" style="margin-bottom: 24px;">Component Breakdown</p>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="body" style="color: var(--text-primary);">Payment History (35%)</span>
+                                    <span class="caption" id="score-ph">—</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="bar-ph" style="width: 0%;"></div></div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="body" style="color: var(--text-primary);">Credit Utilization (30%)</span>
+                                    <span class="caption" id="score-cu">—</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="bar-cu" style="width: 0%;"></div></div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="body" style="color: var(--text-primary);">Credit History (15%)</span>
+                                    <span class="caption" id="score-ch">—</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="bar-ch" style="width: 0%;"></div></div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="body" style="color: var(--text-primary);">Credit Mix (10%)</span>
+                                    <span class="caption" id="score-cm">—</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="bar-cm" style="width: 0%;"></div></div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="body" style="color: var(--text-primary);">New Credit (10%)</span>
+                                    <span class="caption" id="score-nc">—</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="bar-nc" style="width: 0%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Data Form -->
+                <div>
+                    <div class="surface">
+                        <h3 class="heading" style="margin-bottom: 28px;">Financial Profile</h3>
+
+                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                            <div>
+                                <label class="input-label">Monthly Income</label>
+                                <input type="number" class="input-field" id="income" placeholder="Rs 0.00">
+                            </div>
+                            <div>
+                                <label class="input-label">Monthly Expenses</label>
+                                <input type="number" class="input-field" id="expenses" placeholder="Rs 0.00">
+                            </div>
+                        </div>
+
+                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                            <div>
+                                <label class="input-label">Employment Type</label>
+                                <select class="input-select" id="employment-type">
+                                    <option value="">Select</option>
+                                    <option value="salaried">Salaried</option>
+                                    <option value="self_employed">Self Employed</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="input-label">Tenure (Months)</label>
+                                <input type="number" class="input-field" id="tenure" placeholder="0">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label class="input-label">Existing Loans (JSON)</label>
+                            <textarea class="input-field" id="loans" rows="3" placeholder='[{"lender":"SBI","amount":500000,"emi":12000,"tenure":60}]' style="resize: vertical; min-height: 80px;"></textarea>
+                        </div>
+
+                        <div style="margin-bottom: 28px;">
+                            <label class="input-label">Credit Cards (JSON)</label>
+                            <textarea class="input-field" id="cards" rows="2" placeholder='[{"bank":"HDFC","limit":100000,"outstanding":15000}]' style="resize: vertical; min-height: 60px;"></textarea>
+                        </div>
+
+                        <button class="btn-primary" onclick="computeCreditScore()" style="width: 100%; justify-content: center;">
+                            Compute Credit Score
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div id="recommendations" class="surface" style="margin-top: 20px; display: none;">
+                        <span class="num-badge">Recommendations</span>
+                        <ul id="rec-list" style="list-style: none;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- UPI Mandate Section -->
+    <section class="section" id="upi">
+        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=1920&q=80');"></div>
+        <div class="bg-img-overlay"></div>
+        <div class="ambient-glow" style="top: 50%; right: -300px; background: radial-gradient(circle, rgba(201,110,58,0.08) 0%, transparent 70%);"></div>
+        <div class="section-inner">
+            <div class="grid-2">
+                <div>
+                    <span class="num-badge">03 / UPI Mandate</span>
+                    <h2 class="display-lg" style="margin-bottom: 24px;">Recurring<br>Payments</h2>
+                    <p class="body-lg" style="margin-bottom: 48px; max-width: 440px;">
+                        Mandate creation with auto-debit scheduling, intelligent retry engine with exponential backoff, and multi-channel pre-debit notifications.
+                    </p>
+
+                    <!-- Stats -->
+                    <div class="grid-2-sm" style="margin-bottom: 40px;">
+                        <div class="surface" style="text-align: center;">
+                            <p class="display-md" id="stat-active" style="font-size: 48px; font-weight: 800; color: var(--text-primary);">0</p>
+                            <p class="caption" style="margin-top: 8px;">Active</p>
+                        </div>
+                        <div class="surface" style="text-align: center;">
+                            <p class="display-md" id="stat-total" style="font-size: 48px; font-weight: 800; color: var(--text-primary);">0</p>
+                            <p class="caption" style="margin-top: 8px;">Total Executed</p>
+                        </div>
+                    </div>
+
+                    <!-- Retry Engine -->
+                    <div class="surface">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <span class="caption">Retry Engine</span>
+                            <span class="status-badge status-verified" id="retry-status">
+                                <span class="status-dot"></span>Operational
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 32px;">
+                            <div>
+                                <p class="display-md" id="retry-pending" style="font-size: 28px; font-weight: 700;">0</p>
+                                <p class="caption" style="margin-top: 4px;">Pending</p>
+                            </div>
+                            <div>
+                                <p class="display-md" id="retry-success" style="font-size: 28px; font-weight: 700;">0</p>
+                                <p class="caption" style="margin-top: 4px;">Success</p>
+                            </div>
+                            <div>
+                                <p class="display-md" id="retry-rate" style="font-size: 28px; font-weight: 700;">0%</p>
+                                <p class="caption" style="margin-top: 4px;">Rate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Mandate Form -->
+                <div>
+                    <div class="surface">
+                        <h3 class="heading" style="margin-bottom: 28px;">Create Mandate</h3>
+
+                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                            <div>
+                                <label class="input-label">Mandate Type</label>
+                                <select class="input-select" id="mandate-type">
+                                    <option value="">Select</option>
+                                    <option value="emi">EMI</option>
+                                    <option value="subscription">Subscription</option>
+                                    <option value="recurring_bill">Recurring Bill</option>
+                                    <option value="insurance">Insurance</option>
+                                    <option value="investment">Investment</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="input-label">Amount (Rs)</label>
+                                <input type="number" class="input-field" id="mandate-amount" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                            <div>
+                                <label class="input-label">Frequency</label>
+                                <select class="input-select" id="frequency">
+                                    <option value="monthly">Monthly</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="input-label">Max Retries</label>
+                                <input type="number" class="input-field" id="max-retries" value="3" min="1" max="5">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label class="input-label">Your UPI ID</label>
+                            <input type="text" class="input-field" id="payer-upi" placeholder="name@upi">
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label class="input-label">Merchant VPA</label>
+                            <input type="text" class="input-field" id="merchant-vpa" placeholder="merchant@upi">
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label class="input-label">Merchant Name</label>
+                            <input type="text" class="input-field" id="merchant-name" placeholder="Merchant Name">
+                        </div>
+
+                        <div class="grid-2-sm" style="margin-bottom: 28px;">
+                            <div>
+                                <label class="input-label">Start Date</label>
+                                <input type="date" class="input-field" id="start-date">
+                            </div>
+                            <div>
+                                <label class="input-label">End Date</label>
+                                <input type="date" class="input-field" id="end-date">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="createMandate()" style="width: 100%; justify-content: center;">
+                            Create Mandate
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Mandate List -->
+                    <div id="mandate-list" class="surface" style="margin-top: 20px; display: none;">
+                        <p class="caption" style="margin-bottom: 20px;">Your Mandates</p>
+                        <div id="mandates-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Dashboard / API Monitor Section -->
+    <section class="section" id="dashboard">
+        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80');"></div>
+        <div class="bg-img-overlay"></div>
+        <div class="section-inner">
+            <span class="num-badge">Platform Monitor</span>
+            <h2 class="display-lg" style="margin-bottom: 48px;">Service<br>Dashboard</h2>
+
+            <!-- Service Health Grid -->
+            <div class="grid-3" style="margin-bottom: 64px;">
+                <div class="service-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <p class="caption" style="margin-bottom: 8px;">KYC Service</p>
+                            <p class="heading" style="font-size: 24px;">Port 8001</p>
+                        </div>
+                        <span id="health-kyc" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                    </div>
+                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="caption">Status</span>
+                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <p class="caption" style="margin-bottom: 8px;">Credit Score</p>
+                            <p class="heading" style="font-size: 24px;">Port 8002</p>
+                        </div>
+                        <span id="health-credit" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                    </div>
+                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="caption">Status</span>
+                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <p class="caption" style="margin-bottom: 8px;">UPI Mandate</p>
+                            <p class="heading" style="font-size: 24px;">Port 8003</p>
+                        </div>
+                        <span id="health-upi" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                    </div>
+                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="caption">Status</span>
+                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Endpoints -->
+            <div class="surface">
+                <p class="caption" style="margin-bottom: 32px;">API Endpoints</p>
+                <div class="grid-3">
+                    <div>
+                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">KYC Service</p>
+                        <div class="code-block">
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/documents/upload</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/documents/{id}/ocr</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/face-match/verify</span></div>
+                            <div class="api-row"><span class="method">GET</span> <span class="path">/verification/status/{id}</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">Credit Score</p>
+                        <div class="code-block">
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/financial-data/submit</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/score/compute/{id}</span></div>
+                            <div class="api-row"><span class="method">GET</span> <span class="path">/score/user/{id}</span></div>
+                            <div class="api-row"><span class="method">GET</span> <span class="path">/report/user/{id}</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">UPI Mandate</p>
+                        <div class="code-block">
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/mandates/create</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/mandates/{id}/pause</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/retry/execute/{id}</span></div>
+                            <div class="api-row"><span class="method">POST</span> <span class="path">/notifications/send</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p class="caption">FINFLOW Platform — Python + FastAPI + Supabase</p>
+            <p class="caption">v1.0.0</p>
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>
