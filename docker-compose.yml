@@ -9,13 +9,10 @@ services:
     environment:
       - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
       - STORAGE_PATH=/app/storage
-      - REDIS_URL=redis://redis:6379/0
     volumes:
       - ./backend/kyc_service:/app
       - kyc-storage:/app/storage
       - /tmp:/tmp
-    depends_on:
-      - redis
     networks:
       - fintech-network
     restart: unless-stopped
@@ -29,12 +26,9 @@ services:
       - "8002:8000"
     environment:
       - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
-      - REDIS_URL=redis://redis:6379/0
     volumes:
       - ./backend/credit_score_service:/app
       - credit-reports:/app/reports
-    depends_on:
-      - redis
     networks:
       - fintech-network
     restart: unless-stopped
@@ -48,66 +42,13 @@ services:
       - "8003:8000"
     environment:
       - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - ./backend/upi_mandate_service:/app
-    depends_on:
-      - redis
     networks:
       - fintech-network
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: fintech-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    networks:
-      - fintech-network
-    restart: unless-stopped
 
-  celery-worker:
-    build:
-      context: ./backend/upi_mandate_service
-      dockerfile: Dockerfile
-    container_name: fintech-celery
-    command: celery -A app.celery_app worker --loglevel=info
-    environment:
-      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    volumes:
-      - ./backend/upi_mandate_service:/app
-    depends_on:
-      - redis
-      - upi-mandate-service
-    networks:
-      - fintech-network
-    restart: unless-stopped
-
-  celery-beat:
-    build:
-      context: ./backend/upi_mandate_service
-      dockerfile: Dockerfile
-    container_name: fintech-celery-beat
-    command: celery -A app.celery_app beat --loglevel=info
-    environment:
-      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    volumes:
-      - ./backend/upi_mandate_service:/app
-      - celery-beat-data:/var/run/celery
-    depends_on:
-      - redis
-      - upi-mandate-service
-    networks:
-      - fintech-network
-    restart: unless-stopped
 
   frontend:
     image: nginx:alpine
@@ -126,8 +67,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  redis-data:
-  celery-beat-data:
   kyc-storage:
   credit-reports:
 
