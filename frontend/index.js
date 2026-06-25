@@ -109,8 +109,8 @@ async function extractOCR(documentId) {
         document.getElementById('progress-ocr').style.width = '100%';
         document.getElementById('ocr-result').style.display = 'block';
         document.getElementById('ocr-data').textContent = JSON.stringify({
-            document_number: 'XXXX XXXX 9012',
-            name: 'John Doe',
+            document_number: 'XXXX XXXX 7451',
+            name: 'Vineet Sahoo',
             document_type: document.getElementById('doc-type').value
         }, null, 2);
     }
@@ -210,8 +210,8 @@ function displayScore(data) {
     document.getElementById('credit-rating').textContent = data.rating.toUpperCase();
     document.getElementById('credit-rating').style.color =
         data.rating === 'excellent' ? 'var(--success)' :
-        data.rating === 'good' ? 'var(--text-primary)' :
-        data.rating === 'fair' ? 'var(--accent)' : 'var(--error)';
+            data.rating === 'good' ? 'var(--text-primary)' :
+                data.rating === 'fair' ? 'var(--accent)' : 'var(--error)';
 
     document.getElementById('score-breakdown').style.display = 'block';
     const b = data.breakdown;
