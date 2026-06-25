@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upi-mandate-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upi-mandate-service
+  template:
+    metadata:
+      labels:
+        app: upi-mandate-service
+    spec:
+      containers:
+        - name: upi-mandate-service
+          image: fintech-upi-mandate:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: fintech-config
+            - secretRef:
+                name: fintech-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upi-mandate-service
+spec:
+  selector:
+    app: upi-mandate-service
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 8000

@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: credit-reports-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-score-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credit-score-service
+  template:
+    metadata:
+      labels:
+        app: credit-score-service
+    spec:
+      containers:
+        - name: credit-score-service
+          image: fintech-credit-score:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: fintech-config
+            - secretRef:
+                name: fintech-secrets
+          volumeMounts:
+            - name: credit-reports
+              mountPath: /app/reports
+      volumes:
+        - name: credit-reports
+          persistentVolumeClaim:
+            claimName: credit-reports-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-score-service
+spec:
+  selector:
+    app: credit-score-service
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8000
