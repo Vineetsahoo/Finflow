@@ -24,6 +24,13 @@ function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
+// Scroll indicator click
+if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+        scrollToSection('kyc');
+    });
+}
+
 // ===== SCROLL REVEAL =====
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -34,6 +41,24 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ===== HERO PARALLAX =====
+const heroVisual = document.getElementById('heroVisual');
+const heroSection = document.getElementById('hero');
+
+if (heroSection && heroVisual) {
+    heroSection.addEventListener('mousemove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        heroVisual.style.transform = `translate(calc(-50% + ${x * 30}px), calc(-50% + ${y * 30}px))`;
+    });
+
+    heroSection.addEventListener('mouseleave', () => {
+        heroVisual.style.transform = 'translate(-50%, -50%)';
+    });
+}
 
 // ===== UPLOAD ZONE MOUSE TRACKING =====
 const uploadZone = document.getElementById('upload-zone');

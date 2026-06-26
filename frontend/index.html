@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -23,39 +24,76 @@
         </div>
     </nav>
 
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator" id="scrollIndicator">
-        <span class="caption">Scroll</span>
-        <div class="line"></div>
-    </div>
-
     <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80');"></div>
-        <div class="bg-img-overlay-strong"></div>
-        <div class="hero-bg"></div>
-        <div class="hero-grid"></div>
-        <div class="hero-content">
-            <div class="hero-label">
-                <span class="caption">Fintech Infrastructure</span>
+    <section class="hero hero-editorial" id="hero">
+        <!-- Background layers -->
+        <div class="hero-bg-editorial">
+            <div class="hero-grid-editorial"></div>
+            <div class="hero-ambient-glow"></div>
+        </div>
+
+        <!-- Vertical side label -->
+        <div class="side-label">
+            <span>FINFLOW INC</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="hero-content-editorial">
+            <!-- Top tagline -->
+            <div class="hero-tagline-editorial">
+                <span class="caption">MADE FOR BANKS. BUILT FOR FINTECH.</span>
             </div>
-            <h1 class="hero-title display-xl">
-                <span class="line"><span>Unified</span></span>
-                <span class="line"><span>Financial</span></span>
-                <span class="line"><span>Engine</span></span>
+
+            <!-- Massive Title -->
+            <h1 class="hero-title-editorial display-xl">
+                <span class="line"><span>FIN</span></span>
+                <span class="line"><span>FLOW</span></span>
             </h1>
-            <p class="hero-desc body-lg">
-                KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.
-            </p>
-            <div class="hero-actions">
-                <button class="btn-primary" onclick="scrollToSection('kyc')">
-                    Explore Platform
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
-                </button>
-                <button class="btn-secondary" onclick="scrollToSection('dashboard')">
-                    API Documentation
-                </button>
+
+            <!-- Central Visual -->
+            <div class="hero-visual" id="heroVisual">
+                <div class="visual-core"></div>
+                <div class="visual-ring ring-1"></div>
+                <div class="visual-ring ring-2"></div>
+                <div class="visual-ring ring-3"></div>
+                <div class="visual-particles">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
             </div>
+
+            <!-- Right side description -->
+            <div class="hero-desc-editorial">
+                <p class="body-lg">
+                    KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.
+                </p>
+                <div style="margin-top: 32px;">
+                    <button class="btn-ghost" onclick="scrollToSection('kyc')">
+                        Explore Platform
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Left Info Card -->
+        <div class="info-card">
+            <div class="info-card-content">
+                <p class="info-card-title">BUILT FOR SCALE</p>
+                <p class="info-card-sub">THE AWARD-WINNING</p>
+                <p class="info-card-sub">FINTECH STACK.</p>
+                <div class="info-card-divider"></div>
+                <p class="info-card-desc">The world's most sophisticated financial infrastructure engine.</p>
+            </div>
+        </div>
+
+        <!-- Bottom Center Scroll -->
+        <div class="scroll-continue" id="scrollIndicator">
+            <span class="scroll-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2v12M4 10l4 4 4-4" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+            </span>
+            <span class="caption">SCROLL TO CONTINUE</span>
         </div>
     </section>
 
