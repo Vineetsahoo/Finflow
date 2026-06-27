@@ -74,6 +74,9 @@ async def create_mandate(
         "success": True,
         "mandate_id": mandate_id,
         "status": "active",
+        "merchant_name": merchant_name,
+        "amount": amount,
+        "frequency": frequency,
         "message": "Mandate created successfully",
         "executions_scheduled": len(executions)
     }

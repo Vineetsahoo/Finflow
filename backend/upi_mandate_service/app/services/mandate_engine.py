@@ -1,6 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict
 from app.models.models import UPIMandate
+
+
+def _utcnow() -> datetime:
+    """Return current UTC time as a timezone-aware datetime.
+    Avoids mixing naive and aware datetimes which causes TypeError comparisons."""
+    return datetime.now(timezone.utc)
 
 class MandateEngine:
     def generate_execution_schedule(self, mandate: UPIMandate) -> List[Dict]:
@@ -34,7 +40,8 @@ class MandateEngine:
         year = date.year + month // 12
         month = month % 12 + 1
         day = min(date.day, [31, 29 if year % 4 == 0 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1])
-        return datetime(year, month, day, date.hour, date.minute, date.second)
+        # Preserve timezone info so comparisons with timezone-aware mandate dates don't fail
+        return datetime(year, month, day, date.hour, date.minute, date.second, tzinfo=date.tzinfo)
 
     def validate_mandate(self, mandate: UPIMandate) -> Dict:
         errors = []
@@ -48,7 +55,7 @@ class MandateEngine:
         if mandate.end_date <= mandate.start_date:
             errors.append("End date must be after start date")
 
-        if mandate.start_date < datetime.utcnow() - timedelta(days=1):
+        if mandate.start_date < _utcnow() - timedelta(days=1):
             errors.append("Start date cannot be in the past")
 
         if "@" not in mandate.upi_id:

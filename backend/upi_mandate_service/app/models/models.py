@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, JSON, Text, Boo
 from sqlalchemy.sql import func
 from app.database import Base
 
+
 class UPIMandate(Base):
     __tablename__ = "upi_mandates"
 
@@ -26,7 +27,8 @@ class UPIMandate(Base):
     purpose = Column(Text)
     rules = Column(JSON, default=dict)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
 
 class MandateExecution(Base):
     __tablename__ = "mandate_executions"
@@ -46,6 +48,7 @@ class MandateExecution(Base):
     error_code = Column(String(50))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+
 class PreDebitNotification(Base):
     __tablename__ = "pre_debit_notifications"
 
@@ -62,6 +65,7 @@ class PreDebitNotification(Base):
     user_response = Column(String(20))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+
 class RetryQueue(Base):
     __tablename__ = "retry_queue"
 
@@ -76,4 +80,4 @@ class RetryQueue(Base):
     result = Column(Text)
     backoff_minutes = Column(Integer, default=30)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

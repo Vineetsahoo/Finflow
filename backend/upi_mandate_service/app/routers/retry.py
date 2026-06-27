@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.database import get_db
 from app.models.models import MandateExecution, RetryQueue, UPIMandate
 from app.services.retry_engine import RetryEngine
 
 router = APIRouter()
 retry_engine = RetryEngine()
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 @router.get("/queue")
 async def get_retry_queue(db: Session = Depends(get_db)):
@@ -30,7 +34,7 @@ async def execute_retry(execution_id: str, db: Session = Depends(get_db)):
     execution.retry_attempt += 1
     execution.status = result["status"]
     if result["status"] == "success":
-        execution.completed_at = datetime.utcnow()
+        execution.completed_at = _utcnow()
         mandate.successful_executions += 1
     else:
         execution.next_retry_at = result.get("next_retry_at")
@@ -65,7 +69,7 @@ async def get_retry_stats(db: Session = Depends(get_db)):
 async def process_retry_queue(db: Session = Depends(get_db)):
     pending = db.query(RetryQueue).filter(
         RetryQueue.status == "queued",
-        RetryQueue.scheduled_at <= datetime.utcnow()
+        RetryQueue.scheduled_at <= _utcnow()
     ).all()
 
     processed = 0
@@ -83,11 +87,11 @@ async def process_retry_queue(db: Session = Depends(get_db)):
 
             retry.status = "completed" if result["status"] == "success" else "failed"
             retry.result = result["message"]
-            retry.executed_at = datetime.utcnow()
+            retry.executed_at = _utcnow()
 
             execution.status = result["status"]
             if result["status"] == "success":
-                execution.completed_at = datetime.utcnow()
+                execution.completed_at = _utcnow()
 
             processed += 1
 

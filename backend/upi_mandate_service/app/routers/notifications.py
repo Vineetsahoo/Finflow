@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from app.database import get_db
 from app.models.models import PreDebitNotification, UPIMandate, MandateExecution
@@ -8,6 +8,10 @@ from app.services.notification_service import NotificationService
 
 router = APIRouter()
 notif_service = NotificationService()
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 @router.post("/send")
 async def send_notification(
@@ -37,7 +41,7 @@ async def send_notification(
         message=message,
         scheduled_debit_date=debit_date,
         status="sent",
-        sent_at=datetime.utcnow(),
+        sent_at=_utcnow(),
         delivery_status="delivered"
     )
 
@@ -90,8 +94,8 @@ async def acknowledge_notification(
 @router.post("/schedule-auto")
 async def schedule_auto_notifications(db: Session = Depends(get_db)):
     upcoming = db.query(MandateExecution).filter(
-        MandateExecution.scheduled_at <= datetime.utcnow() + timedelta(hours=48),
-        MandateExecution.scheduled_at > datetime.utcnow(),
+        MandateExecution.scheduled_at <= _utcnow() + timedelta(hours=48),
+        MandateExecution.scheduled_at > _utcnow(),
         MandateExecution.status == "scheduled"
     ).all()
 

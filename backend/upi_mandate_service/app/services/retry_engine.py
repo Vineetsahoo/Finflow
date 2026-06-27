@@ -1,7 +1,12 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict
 from app.models.models import MandateExecution, UPIMandate, RetryQueue
+
+
+def _utcnow() -> datetime:
+    """Timezone-aware UTC now — prevents naive/aware comparison errors."""
+    return datetime.now(timezone.utc)
 
 class RetryEngine:
     def __init__(self):
@@ -25,7 +30,7 @@ class RetryEngine:
             else:
                 backoff = self.max_backoff_minutes
 
-            next_retry = datetime.utcnow() + timedelta(minutes=backoff)
+            next_retry = _utcnow() + timedelta(minutes=backoff)
 
             return {
                 "status": "failed",
@@ -49,7 +54,7 @@ class RetryEngine:
         else:
             backoff = self.max_backoff_minutes
 
-        scheduled_at = datetime.utcnow() + timedelta(minutes=backoff)
+        scheduled_at = _utcnow() + timedelta(minutes=backoff)
 
         return {
             "created": True,
