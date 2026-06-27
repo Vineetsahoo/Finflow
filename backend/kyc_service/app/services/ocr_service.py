@@ -1,3 +1,4 @@
+import os
 import pytesseract
 from PIL import Image
 import cv2
@@ -72,9 +73,16 @@ class OCRService:
         return result
 
     def extract_name(self, text):
-        lines = text.split("\n")
+        # text arrives upper-cased and newline-flattened in parse_document_data,
+        # so we split on multiple spaces that replaced the original line breaks.
+        skip_words = {"NAME", "FATHER", "MOTHER", "ADDRESS", "INDIA", "GOVERNMENT",
+                      "INCOME", "TAX", "DEPARTMENT", "PERMANENT", "ACCOUNT", "NUMBER"}
+        lines = text.split("  ")  # double-space as separator after upper+join
         for line in lines:
             line = line.strip()
-            if len(line) > 3 and line.isalpha() and line not in ["NAME", "FATHER", "MOTHER", "ADDRESS"]:
+            # A name candidate: 3–40 chars, only alpha/space, not a known keyword
+            if (3 < len(line) <= 40
+                    and all(c.isalpha() or c.isspace() for c in line)
+                    and line not in skip_words):
                 return line.title()
         return "Unknown"

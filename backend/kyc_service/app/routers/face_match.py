@@ -33,8 +33,9 @@ async def verify_face(
     with open(temp_selfie, "wb") as buffer:
         shutil.copyfileobj(selfie.file, buffer)
 
+    # Upload to storage first, then use the local temp file for face matching
     selfie_path = storage_service.upload_file(temp_selfie, relative_path)
-    os.remove(temp_selfie)
+    # Do NOT remove temp_selfie yet — DeepFace still needs it for matching
 
     temp_doc = f"/tmp/doc_photo_{file_id}.png"
     storage_service.download_file(doc.file_path, temp_doc)
@@ -53,6 +54,7 @@ async def verify_face(
     db.commit()
     db.refresh(verification)
 
+    # Clean up temp files after face match is done
     for f in [temp_doc, temp_selfie]:
         if os.path.exists(f):
             os.remove(f)
