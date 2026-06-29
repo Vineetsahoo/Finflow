@@ -8,14 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
     <!-- Navigation -->
-    <nav class="nav">
-        <a href="#" class="nav-logo">FINFLOW</a>
+    <nav class="nav" id="mainNav">
+        <a href="#hero" class="nav-logo">FINFLOW</a>
         <div class="nav-links">
             <a href="#kyc" class="nav-link">KYC</a>
             <a href="#credit" class="nav-link">Credit</a>
@@ -24,33 +22,24 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- ═══════════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════════ -->
     <section class="hero hero-editorial" id="hero">
-        <!-- Background layers -->
         <div class="hero-bg-editorial">
             <div class="hero-grid-editorial"></div>
             <div class="hero-ambient-glow"></div>
+            <div class="hero-noise"></div>
         </div>
-
-        <!-- Vertical side label -->
-        <div class="side-label">
-            <span>FINFLOW INC</span>
-        </div>
-
-        <!-- Main Content -->
+        <div class="side-label"><span>FINFLOW INC</span></div>
         <div class="hero-content-editorial">
-            <!-- Top tagline -->
             <div class="hero-tagline-editorial">
                 <span class="caption">MADE FOR BANKS. BUILT FOR FINTECH.</span>
             </div>
-
-            <!-- Massive Title -->
             <h1 class="hero-title-editorial display-xl">
                 <span class="line"><span>FIN</span></span>
                 <span class="line"><span>FLOW</span></span>
             </h1>
-
-            <!-- Central Visual -->
             <div class="hero-visual" id="heroVisual">
                 <div class="visual-core"></div>
                 <div class="visual-ring ring-1"></div>
@@ -61,21 +50,14 @@
                     <span></span><span></span><span></span><span></span><span></span>
                 </div>
             </div>
-
-            <!-- Right side description -->
             <div class="hero-desc-editorial">
-                <p class="body-lg">
-                    KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.
-                </p>
-                <div style="margin-top: 32px;">
-                    <button class="btn-ghost" onclick="scrollToSection('kyc')">
-                        Explore Platform
-                    </button>
+                <p class="body-lg">KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.</p>
+                <div style="margin-top: 32px; display:flex; gap:16px; flex-wrap:wrap;">
+                    <button class="btn-primary" onclick="smoothNav('kyc')">Explore Platform</button>
+                    <button class="btn-secondary" onclick="smoothNav('dashboard')">View Status</button>
                 </div>
             </div>
         </div>
-
-        <!-- Bottom Left Info Card -->
         <div class="info-card">
             <div class="info-card-content">
                 <p class="info-card-title">BUILT FOR SCALE</p>
@@ -85,8 +67,6 @@
                 <p class="info-card-desc">The world's most sophisticated financial infrastructure engine.</p>
             </div>
         </div>
-
-        <!-- Bottom Center Scroll -->
         <div class="scroll-continue" id="scrollIndicator">
             <span class="scroll-icon">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -97,314 +77,454 @@
         </div>
     </section>
 
-    <div class="section-divider"></div>
+    <!-- ═══════════════════════════════════════════
+         STORY INTERLUDE — Chapter Marker
+    ═══════════════════════════════════════════ -->
+    <div class="chapter-marker reveal">
+        <div class="chapter-line"></div>
+        <div class="chapter-label">
+            <span class="caption">THE PLATFORM</span>
+            <span class="chapter-num">Three services. One vision.</span>
+        </div>
+        <div class="chapter-line"></div>
+    </div>
 
-    <!-- KYC Service Section -->
-    <section class="section" id="kyc">
-        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?w=1920&q=80');"></div>
-        <div class="bg-img-overlay"></div>
-        <div class="ambient-glow" style="top: -200px; right: -200px;"></div>
+    <!-- ═══════════════════════════════════════════
+         KYC SERVICE SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section section-story" id="kyc">
+        <div class="section-bg-texture"></div>
+        <div class="section-number-bg">01</div>
         <div class="section-inner">
-            <div class="grid-2">
-                <div>
-                    <span class="num-badge">01 / KYC Service</span>
-                    <h2 class="display-lg" style="margin-bottom: 24px;">Identity<br>Verification</h2>
-                    <p class="body-lg" style="margin-bottom: 40px; max-width: 440px;">
-                        Document upload with OCR extraction, face verification using DeepFace, and complete audit trail. Supports Aadhaar, PAN, Passport, and Driving License.
-                    </p>
 
-                    <!-- Status Panel -->
-                    <div class="surface" style="margin-bottom: 24px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                            <span class="caption">Verification Status</span>
+            <!-- Story Header -->
+            <div class="story-header reveal">
+                <div class="story-meta">
+                    <span class="story-chapter">Chapter 01</span>
+                    <span class="story-slash">/</span>
+                    <span class="story-title-sm">Identity Verification</span>
+                </div>
+                <h2 class="display-lg story-heading">Know Your<br><em class="accent-italic">Customer</em></h2>
+                <p class="body-lg story-desc">
+                    Document intelligence powered by Tesseract OCR. Biometric liveness detection via DeepFace. Every identity claim verified, every document authenticated.
+                </p>
+            </div>
+
+            <!-- Feature Pills -->
+            <div class="feature-pills reveal reveal-delay-1">
+                <span class="pill">Aadhaar</span>
+                <span class="pill">PAN Card</span>
+                <span class="pill">Passport</span>
+                <span class="pill">Driving License</span>
+                <span class="pill active">DeepFace AI</span>
+                <span class="pill">OCR Engine</span>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="story-grid">
+                <!-- Left Column: Status + Controls -->
+                <div class="story-col-left">
+                    <!-- Verification Pipeline Visualizer -->
+                    <div class="pipeline-card reveal reveal-delay-2">
+                        <div class="pipeline-header">
+                            <span class="caption">Verification Pipeline</span>
                             <span class="status-badge status-pending" id="kyc-status-badge">
                                 <span class="status-dot"></span>Pending
                             </span>
                         </div>
-                        <div style="display: flex; gap: 16px; margin-bottom: 8px;">
-                            <div style="flex: 1;">
-                                <div class="progress-track"><div class="progress-fill" id="progress-doc" style="width: 0%;"></div></div>
-                                <p class="caption" style="margin-top: 10px;">Document</p>
+                        <div class="pipeline-steps">
+                            <div class="pipeline-step" id="step-doc">
+                                <div class="pipeline-step-icon">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <rect x="3" y="1" width="10" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+                                        <path d="M6 5h6M6 8h6M6 11h4" stroke="currentColor" stroke-width="1.2"/>
+                                    </svg>
+                                </div>
+                                <div class="pipeline-step-info">
+                                    <span class="pipeline-step-label">Document Upload</span>
+                                    <div class="progress-track"><div class="progress-fill" id="progress-doc" style="width:0%"></div></div>
+                                </div>
+                                <span class="pipeline-step-pct" id="pct-doc">0%</span>
                             </div>
-                            <div style="flex: 1;">
-                                <div class="progress-track"><div class="progress-fill" id="progress-ocr" style="width: 0%;"></div></div>
-                                <p class="caption" style="margin-top: 10px;">OCR</p>
+                            <div class="pipeline-connector"></div>
+                            <div class="pipeline-step" id="step-ocr">
+                                <div class="pipeline-step-icon">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <path d="M2 5h4M2 9h8M2 13h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                                        <rect x="10" y="7" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/>
+                                        <circle cx="13" cy="10" r="1" fill="currentColor"/>
+                                    </svg>
+                                </div>
+                                <div class="pipeline-step-info">
+                                    <span class="pipeline-step-label">OCR Extraction</span>
+                                    <div class="progress-track"><div class="progress-fill" id="progress-ocr" style="width:0%"></div></div>
+                                </div>
+                                <span class="pipeline-step-pct" id="pct-ocr">0%</span>
                             </div>
-                            <div style="flex: 1;">
-                                <div class="progress-track"><div class="progress-fill" id="progress-face" style="width: 0%;"></div></div>
-                                <p class="caption" style="margin-top: 10px;">Face Match</p>
+                            <div class="pipeline-connector"></div>
+                            <div class="pipeline-step" id="step-face">
+                                <div class="pipeline-step-icon">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/>
+                                        <path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <div class="pipeline-step-info">
+                                    <span class="pipeline-step-label">Face Biometrics</span>
+                                    <div class="progress-track"><div class="progress-fill" id="progress-face" style="width:0%"></div></div>
+                                </div>
+                                <span class="pipeline-step-pct" id="pct-face">0%</span>
                             </div>
                         </div>
                     </div>
-
-                    <div style="display: flex; gap: 24px;">
-                        <button class="btn-ghost" onclick="showKycDocs()">View Documents</button>
-                        <button class="btn-ghost" onclick="showKycVerifications()">Verifications</button>
-                    </div>
+                    <!-- Face match result -->
+                    <div id="face-match-result" style="display:none; margin-top:16px;"></div>
                 </div>
 
-                <!-- Upload Interface -->
-                <div>
-                    <div class="surface">
-                        <h3 class="heading" style="margin-bottom: 28px;">Upload Document</h3>
-
+                <!-- Right Column: Upload Interface -->
+                <div class="story-col-right">
+                    <div class="glass-card reveal reveal-delay-3">
+                        <div class="glass-card-header">
+                            <h3 class="heading">Upload Document</h3>
+                            <span class="glass-card-badge">Step 1</span>
+                        </div>
                         <div style="margin-bottom: 20px;">
                             <label class="input-label">Document Type</label>
                             <select class="input-select" id="doc-type">
-                                <option value="">Select type</option>
+                                <option value="">Select document type</option>
                                 <option value="aadhaar">Aadhaar Card</option>
                                 <option value="pan">PAN Card</option>
                                 <option value="passport">Passport</option>
                                 <option value="driving_license">Driving License</option>
                             </select>
                         </div>
-
                         <div class="upload-zone" id="upload-zone" onclick="document.getElementById('doc-file').click()">
-                            <input type="file" id="doc-file" style="display: none;" accept="image/*,.pdf" onchange="handleFileSelect(event)">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="margin-bottom: 16px; opacity: 0.4;">
-                                <path d="M20 8v24M8 20h24" stroke="currentColor" stroke-width="1.5"/>
-                            </svg>
-                            <p class="body" style="color: var(--text-secondary); margin-bottom: 8px;">Drop document here or click to browse</p>
-                            <p class="caption">JPG, PNG, PDF up to 10MB</p>
+                            <input type="file" id="doc-file" style="display:none;" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                            <div class="upload-zone-icon">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                    <path d="M16 4v18M8 14l8-10 8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M4 24v2a2 2 0 002 2h20a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <p class="body" style="color:var(--text-secondary); margin-bottom:6px;">Drop document here or click to browse</p>
+                            <p class="caption">JPG, PNG, PDF — max 20MB</p>
                         </div>
-
-                        <div id="upload-preview" style="display: none; margin-top: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--bg-tertiary); border-radius: 12px;">
-                                <span class="body" id="filename" style="color: var(--text-primary);"></span>
-                                <button class="btn-primary" style="padding: 10px 20px; font-size: 12px;" onclick="uploadDocument()">Upload</button>
+                        <div id="upload-preview" style="display:none; margin-top:16px;">
+                            <div class="file-preview-row">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <div class="file-icon">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 4h5M5 7h5M5 10h3" stroke="currentColor" stroke-width="1.1"/></svg>
+                                    </div>
+                                    <span class="body" id="filename" style="color:var(--text-primary);"></span>
+                                </div>
+                                <button class="btn-primary" style="padding:10px 24px; font-size:12px;" onclick="uploadDocument()">Upload</button>
                             </div>
                         </div>
-
-                        <div id="ocr-result" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
-                            <span class="num-badge">OCR Extracted Data</span>
-                            <pre id="ocr-data" class="body" style="color: var(--text-primary); font-family: inherit; white-space: pre-wrap; background: var(--bg-tertiary); padding: 20px; border-radius: 12px;"></pre>
+                        <div id="ocr-result" style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                <span class="num-badge" style="margin:0;">OCR Result</span>
+                                <span class="status-badge status-verified" style="font-size:10px;">Extracted</span>
+                            </div>
+                            <pre id="ocr-data" class="ocr-output"></pre>
                         </div>
                     </div>
 
-                    <!-- Face Verification -->
-                    <div class="surface" style="margin-top: 20px;">
-                        <h3 class="heading" style="margin-bottom: 16px; font-size: 18px;">Face Verification</h3>
-                        <p class="body" style="margin-bottom: 20px;">Upload a selfie to match against your document photo.</p>
-                        <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="triggerSelfie()">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
-                            Take Selfie
+                    <!-- Face Verify -->
+                    <div class="glass-card reveal reveal-delay-4" style="margin-top:20px;">
+                        <div class="glass-card-header">
+                            <h3 class="heading">Biometric Verification</h3>
+                            <span class="glass-card-badge">Step 2</span>
+                        </div>
+                        <p class="body" style="margin-bottom:20px;">Upload a selfie to run a DeepFace similarity analysis against your document photograph.</p>
+                        <button class="btn-secondary" style="width:100%; justify-content:center;" onclick="triggerSelfie()">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 13.5c0-3 3-5 7-5s7 2 7 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/></svg>
+                            Capture Selfie
                         </button>
-                        <input type="file" id="selfie-file" style="display: none;" accept="image/*" onchange="handleSelfie(event)">
-                        <div id="face-match-result" style="display: none; margin-top: 20px;"></div>
+                        <input type="file" id="selfie-file" style="display:none;" accept="image/*" onchange="handleSelfie(event)">
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="section-divider"></div>
+    <!-- ═══════════════════════════════════════════
+         TRANSITION — Marquee Belt
+    ═══════════════════════════════════════════ -->
+    <div class="marquee-belt">
+        <div class="marquee-track">
+            <span>KYC VERIFIED</span><span class="marquee-dot">·</span>
+            <span>CREDIT SCORED</span><span class="marquee-dot">·</span>
+            <span>MANDATE ACTIVE</span><span class="marquee-dot">·</span>
+            <span>FRAUD DETECTED</span><span class="marquee-dot">·</span>
+            <span>AUDIT COMPLETE</span><span class="marquee-dot">·</span>
+            <span>KYC VERIFIED</span><span class="marquee-dot">·</span>
+            <span>CREDIT SCORED</span><span class="marquee-dot">·</span>
+            <span>MANDATE ACTIVE</span><span class="marquee-dot">·</span>
+            <span>FRAUD DETECTED</span><span class="marquee-dot">·</span>
+            <span>AUDIT COMPLETE</span><span class="marquee-dot">·</span>
+        </div>
+    </div>
 
-    <!-- Credit Score Section -->
-    <section class="section" id="credit">
-        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');"></div>
-        <div class="bg-img-overlay"></div>
-        <div class="ambient-glow" style="bottom: -200px; left: -200px; background: radial-gradient(circle, rgba(90,122,74,0.1) 0%, transparent 70%);"></div>
+    <!-- ═══════════════════════════════════════════
+         CREDIT SCORE SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section section-story section-credit" id="credit">
+        <div class="section-bg-texture"></div>
+        <div class="section-number-bg">02</div>
         <div class="section-inner">
-            <div class="grid-2">
-                <div>
-                    <span class="num-badge">02 / Credit Score</span>
-                    <h2 class="display-lg" style="margin-bottom: 24px;">Credit<br>Assessment</h2>
-                    <p class="body-lg" style="margin-bottom: 48px; max-width: 440px;">
-                        Financial data intake, CIBIL-style score computation with weighted breakdown, and comprehensive reporting with recommendations.
-                    </p>
 
-                    <!-- Score Display -->
-                    <div style="display: flex; align-items: center; gap: 48px; margin-bottom: 48px;">
-                        <div class="score-ring">
-                            <div style="text-align: center;">
-                                <p class="display-md" id="credit-score-value" style="color: var(--text-primary); font-weight: 800;">—</p>
-                                <p class="caption" style="margin-top: 8px;">Out of 900</p>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="caption" style="margin-bottom: 8px;">Rating</p>
-                            <p class="display-md" id="credit-rating" style="color: var(--text-primary); font-size: 32px;">Not computed</p>
-                        </div>
-                    </div>
-
-                    <!-- Score Breakdown -->
-                    <div id="score-breakdown" style="display: none;">
-                        <p class="caption" style="margin-bottom: 24px;">Component Breakdown</p>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span class="body" style="color: var(--text-primary);">Payment History (35%)</span>
-                                    <span class="caption" id="score-ph">—</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" id="bar-ph" style="width: 0%;"></div></div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span class="body" style="color: var(--text-primary);">Credit Utilization (30%)</span>
-                                    <span class="caption" id="score-cu">—</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" id="bar-cu" style="width: 0%;"></div></div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span class="body" style="color: var(--text-primary);">Credit History (15%)</span>
-                                    <span class="caption" id="score-ch">—</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" id="bar-ch" style="width: 0%;"></div></div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span class="body" style="color: var(--text-primary);">Credit Mix (10%)</span>
-                                    <span class="caption" id="score-cm">—</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" id="bar-cm" style="width: 0%;"></div></div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span class="body" style="color: var(--text-primary);">New Credit (10%)</span>
-                                    <span class="caption" id="score-nc">—</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" id="bar-nc" style="width: 0%;"></div></div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="story-header reveal">
+                <div class="story-meta">
+                    <span class="story-chapter">Chapter 02</span>
+                    <span class="story-slash">/</span>
+                    <span class="story-title-sm">Credit Assessment</span>
                 </div>
+                <h2 class="display-lg story-heading">Score the<br><em class="accent-italic">Risk</em></h2>
+                <p class="body-lg story-desc">
+                    CIBIL-style weighted scoring across five financial dimensions. Instant recommendations. Comprehensive PDF-ready reports.
+                </p>
+            </div>
 
-                <!-- Financial Data Form -->
-                <div>
-                    <div class="surface">
-                        <h3 class="heading" style="margin-bottom: 28px;">Financial Profile</h3>
+            <div class="feature-pills reveal reveal-delay-1">
+                <span class="pill active">CIBIL Model</span>
+                <span class="pill">300–900 Range</span>
+                <span class="pill">5 Dimensions</span>
+                <span class="pill">DTI Analysis</span>
+                <span class="pill">Recommendations</span>
+                <span class="pill">PDF Reports</span>
+            </div>
 
-                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+            <div class="story-grid story-grid-reverse">
+                <!-- Left: Financial Form -->
+                <div class="story-col-right">
+                    <div class="glass-card reveal reveal-delay-2">
+                        <div class="glass-card-header">
+                            <h3 class="heading">Financial Profile</h3>
+                            <span class="glass-card-badge">Input</span>
+                        </div>
+                        <div class="grid-2-sm" style="margin-bottom:20px;">
                             <div>
                                 <label class="input-label">Monthly Income</label>
-                                <input type="number" class="input-field" id="income" placeholder="Rs 0.00">
+                                <input type="number" class="input-field" id="income" placeholder="₹ 0.00">
                             </div>
                             <div>
                                 <label class="input-label">Monthly Expenses</label>
-                                <input type="number" class="input-field" id="expenses" placeholder="Rs 0.00">
+                                <input type="number" class="input-field" id="expenses" placeholder="₹ 0.00">
                             </div>
                         </div>
-
-                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                        <div class="grid-2-sm" style="margin-bottom:20px;">
                             <div>
                                 <label class="input-label">Employment Type</label>
                                 <select class="input-select" id="employment-type">
                                     <option value="">Select</option>
                                     <option value="salaried">Salaried</option>
                                     <option value="self_employed">Self Employed</option>
-                                    <option value="business">Business</option>
+                                    <option value="business">Business Owner</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="input-label">Tenure (Months)</label>
+                                <label class="input-label">Tenure (months)</label>
                                 <input type="number" class="input-field" id="tenure" placeholder="0">
                             </div>
                         </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label class="input-label">Existing Loans (JSON)</label>
-                            <textarea class="input-field" id="loans" rows="3" placeholder='[{"lender":"SBI","amount":500000,"emi":12000,"tenure":60}]' style="resize: vertical; min-height: 80px;"></textarea>
+                        <div style="margin-bottom:20px;">
+                            <label class="input-label">Existing Loans (JSON array)</label>
+                            <textarea class="input-field input-textarea" id="loans" rows="3" placeholder='[{"lender":"SBI","amount":500000,"emi":12000,"type":"home"}]'></textarea>
                         </div>
-
-                        <div style="margin-bottom: 28px;">
-                            <label class="input-label">Credit Cards (JSON)</label>
-                            <textarea class="input-field" id="cards" rows="2" placeholder='[{"bank":"HDFC","limit":100000,"outstanding":15000}]' style="resize: vertical; min-height: 60px;"></textarea>
+                        <div style="margin-bottom:28px;">
+                            <label class="input-label">Credit Cards (JSON array)</label>
+                            <textarea class="input-field input-textarea" id="cards" rows="2" placeholder='[{"bank":"HDFC","limit":100000,"outstanding":15000}]'></textarea>
                         </div>
-
-                        <button class="btn-primary" onclick="computeCreditScore()" style="width: 100%; justify-content: center;">
-                            Compute Credit Score
+                        <button class="btn-primary btn-full" onclick="computeCreditScore()">
+                            Compute Score
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
                         </button>
                     </div>
+                </div>
 
-                    <!-- Recommendations -->
-                    <div id="recommendations" class="surface" style="margin-top: 20px; display: none;">
-                        <span class="num-badge">Recommendations</span>
-                        <ul id="rec-list" style="list-style: none;"></ul>
+                <!-- Right: Score Display -->
+                <div class="story-col-left">
+                    <div class="score-display-card reveal reveal-delay-3">
+                        <div class="score-ring-wrap">
+                            <div class="score-ring-outer">
+                                <svg class="score-arc" viewBox="0 0 220 220" fill="none">
+                                    <circle cx="110" cy="110" r="100" stroke="rgba(245,232,217,0.06)" stroke-width="8"/>
+                                    <circle id="score-arc-fill" cx="110" cy="110" r="100" stroke="var(--accent)" stroke-width="8"
+                                        stroke-linecap="round" stroke-dasharray="628" stroke-dashoffset="628"
+                                        transform="rotate(-90 110 110)" style="transition: stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1)"/>
+                                </svg>
+                                <div class="score-ring-inner">
+                                    <p class="score-value" id="credit-score-value">—</p>
+                                    <p class="caption" style="margin-top:4px;">of 900</p>
+                                    <p class="score-label" id="credit-rating">Not Computed</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown bars -->
+                        <div id="score-breakdown" style="display:none;">
+                            <p class="caption" style="margin-bottom:20px;">Score Components</p>
+                            <div class="breakdown-list">
+                                <div class="breakdown-row">
+                                    <span class="breakdown-name">Payment History <em>35%</em></span>
+                                    <div class="progress-track"><div class="progress-fill" id="bar-ph"></div></div>
+                                    <span class="breakdown-val" id="score-ph">—</span>
+                                </div>
+                                <div class="breakdown-row">
+                                    <span class="breakdown-name">Credit Utilization <em>30%</em></span>
+                                    <div class="progress-track"><div class="progress-fill" id="bar-cu"></div></div>
+                                    <span class="breakdown-val" id="score-cu">—</span>
+                                </div>
+                                <div class="breakdown-row">
+                                    <span class="breakdown-name">Credit History <em>15%</em></span>
+                                    <div class="progress-track"><div class="progress-fill" id="bar-ch"></div></div>
+                                    <span class="breakdown-val" id="score-ch">—</span>
+                                </div>
+                                <div class="breakdown-row">
+                                    <span class="breakdown-name">Credit Mix <em>10%</em></span>
+                                    <div class="progress-track"><div class="progress-fill" id="bar-cm"></div></div>
+                                    <span class="breakdown-val" id="score-cm">—</span>
+                                </div>
+                                <div class="breakdown-row">
+                                    <span class="breakdown-name">New Credit <em>10%</em></span>
+                                    <div class="progress-track"><div class="progress-fill" id="bar-nc"></div></div>
+                                    <span class="breakdown-val" id="score-nc">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="recommendations" class="rec-card reveal reveal-delay-4" style="display:none;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                            <span class="num-badge" style="margin:0;">Recommendations</span>
+                        </div>
+                        <ul id="rec-list" class="rec-list"></ul>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="section-divider"></div>
+    <!-- Marquee 2 -->
+    <div class="marquee-belt marquee-belt-rev">
+        <div class="marquee-track marquee-track-rev">
+            <span>RISK ASSESSED</span><span class="marquee-dot">·</span>
+            <span>SCORE COMPUTED</span><span class="marquee-dot">·</span>
+            <span>PROFILE ANALYSED</span><span class="marquee-dot">·</span>
+            <span>REPORT GENERATED</span><span class="marquee-dot">·</span>
+            <span>DECISION MADE</span><span class="marquee-dot">·</span>
+            <span>RISK ASSESSED</span><span class="marquee-dot">·</span>
+            <span>SCORE COMPUTED</span><span class="marquee-dot">·</span>
+            <span>PROFILE ANALYSED</span><span class="marquee-dot">·</span>
+            <span>REPORT GENERATED</span><span class="marquee-dot">·</span>
+            <span>DECISION MADE</span><span class="marquee-dot">·</span>
+        </div>
+    </div>
 
-    <!-- UPI Mandate Section -->
-    <section class="section" id="upi">
-        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=1920&q=80');"></div>
-        <div class="bg-img-overlay"></div>
-        <div class="ambient-glow" style="top: 50%; right: -300px; background: radial-gradient(circle, rgba(201,110,58,0.08) 0%, transparent 70%);"></div>
+    <!-- ═══════════════════════════════════════════
+         UPI MANDATE SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section section-story section-upi" id="upi">
+        <div class="section-bg-texture"></div>
+        <div class="section-number-bg">03</div>
         <div class="section-inner">
-            <div class="grid-2">
-                <div>
-                    <span class="num-badge">03 / UPI Mandate</span>
-                    <h2 class="display-lg" style="margin-bottom: 24px;">Recurring<br>Payments</h2>
-                    <p class="body-lg" style="margin-bottom: 48px; max-width: 440px;">
-                        Mandate creation with auto-debit scheduling, intelligent retry engine with exponential backoff, and multi-channel pre-debit notifications.
-                    </p>
 
-                    <!-- Stats -->
-                    <div class="grid-2-sm" style="margin-bottom: 40px;">
-                        <div class="surface" style="text-align: center;">
-                            <p class="display-md" id="stat-active" style="font-size: 48px; font-weight: 800; color: var(--text-primary);">0</p>
-                            <p class="caption" style="margin-top: 8px;">Active</p>
+            <div class="story-header reveal">
+                <div class="story-meta">
+                    <span class="story-chapter">Chapter 03</span>
+                    <span class="story-slash">/</span>
+                    <span class="story-title-sm">UPI Mandate</span>
+                </div>
+                <h2 class="display-lg story-heading">Automate<br><em class="accent-italic">Payments</em></h2>
+                <p class="body-lg story-desc">
+                    Recurring mandate creation, intelligent retry with exponential backoff, and multi-channel pre-debit notifications. Payments that just work.
+                </p>
+            </div>
+
+            <div class="feature-pills reveal reveal-delay-1">
+                <span class="pill active">Auto-Debit</span>
+                <span class="pill">Retry Engine</span>
+                <span class="pill">Exp. Backoff</span>
+                <span class="pill">Pre-Debit Alerts</span>
+                <span class="pill">EMI / SIP / Bills</span>
+            </div>
+
+            <div class="story-grid">
+                <!-- Left: Stats + Engine -->
+                <div class="story-col-left">
+                    <!-- Live stats -->
+                    <div class="stats-grid reveal reveal-delay-2">
+                        <div class="stat-tile">
+                            <p class="stat-value" id="stat-active">0</p>
+                            <p class="stat-label">Active Mandates</p>
+                            <div class="stat-indicator active-ind"></div>
                         </div>
-                        <div class="surface" style="text-align: center;">
-                            <p class="display-md" id="stat-total" style="font-size: 48px; font-weight: 800; color: var(--text-primary);">0</p>
-                            <p class="caption" style="margin-top: 8px;">Total Executed</p>
+                        <div class="stat-tile">
+                            <p class="stat-value" id="stat-total">0</p>
+                            <p class="stat-label">Total Executions</p>
+                            <div class="stat-indicator"></div>
                         </div>
                     </div>
 
-                    <!-- Retry Engine -->
-                    <div class="surface">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                            <span class="caption">Retry Engine</span>
-                            <span class="status-badge status-verified" id="retry-status">
+                    <!-- Retry Engine card -->
+                    <div class="engine-card reveal reveal-delay-3">
+                        <div class="engine-card-header">
+                            <div>
+                                <p class="caption" style="margin-bottom:6px;">Retry Engine</p>
+                                <p class="heading" style="font-size:16px;">Exponential Backoff</p>
+                            </div>
+                            <span class="status-badge status-verified">
                                 <span class="status-dot"></span>Operational
                             </span>
                         </div>
-                        <div style="display: flex; gap: 32px;">
-                            <div>
-                                <p class="display-md" id="retry-pending" style="font-size: 28px; font-weight: 700;">0</p>
-                                <p class="caption" style="margin-top: 4px;">Pending</p>
-                            </div>
-                            <div>
-                                <p class="display-md" id="retry-success" style="font-size: 28px; font-weight: 700;">0</p>
-                                <p class="caption" style="margin-top: 4px;">Success</p>
-                            </div>
-                            <div>
-                                <p class="display-md" id="retry-rate" style="font-size: 28px; font-weight: 700;">0%</p>
-                                <p class="caption" style="margin-top: 4px;">Rate</p>
-                            </div>
+                        <div class="retry-timeline">
+                            <div class="retry-node active-node"><span>T+0</span><p class="caption">Attempt 1</p></div>
+                            <div class="retry-edge"></div>
+                            <div class="retry-node"><span>T+30m</span><p class="caption">Retry 1</p></div>
+                            <div class="retry-edge"></div>
+                            <div class="retry-node"><span>T+60m</span><p class="caption">Retry 2</p></div>
+                            <div class="retry-edge"></div>
+                            <div class="retry-node"><span>T+2h</span><p class="caption">Final</p></div>
                         </div>
+                        <div class="engine-metrics">
+                            <div><p class="stat-value" id="retry-pending" style="font-size:28px;">0</p><p class="caption">Pending</p></div>
+                            <div><p class="stat-value" id="retry-success" style="font-size:28px;">0</p><p class="caption">Success</p></div>
+                            <div><p class="stat-value" id="retry-rate" style="font-size:28px;">0%</p><p class="caption">Rate</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Mandate List -->
+                    <div id="mandate-list" class="mandate-list-card reveal" style="display:none; margin-top:20px;">
+                        <p class="caption" style="margin-bottom:16px;">Active Mandates</p>
+                        <div id="mandates-container"></div>
                     </div>
                 </div>
 
-                <!-- Create Mandate Form -->
-                <div>
-                    <div class="surface">
-                        <h3 class="heading" style="margin-bottom: 28px;">Create Mandate</h3>
-
-                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                <!-- Right: Create Mandate Form -->
+                <div class="story-col-right">
+                    <div class="glass-card reveal reveal-delay-4">
+                        <div class="glass-card-header">
+                            <h3 class="heading">Create Mandate</h3>
+                            <span class="glass-card-badge">New</span>
+                        </div>
+                        <div class="grid-2-sm" style="margin-bottom:20px;">
                             <div>
                                 <label class="input-label">Mandate Type</label>
                                 <select class="input-select" id="mandate-type">
-                                    <option value="">Select</option>
+                                    <option value="">Select type</option>
                                     <option value="emi">EMI</option>
                                     <option value="subscription">Subscription</option>
                                     <option value="recurring_bill">Recurring Bill</option>
                                     <option value="insurance">Insurance</option>
-                                    <option value="investment">Investment</option>
+                                    <option value="investment">Investment / SIP</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="input-label">Amount (Rs)</label>
+                                <label class="input-label">Amount (₹)</label>
                                 <input type="number" class="input-field" id="mandate-amount" placeholder="0.00">
                             </div>
                         </div>
-
-                        <div class="grid-2-sm" style="margin-bottom: 20px;">
+                        <div class="grid-2-sm" style="margin-bottom:20px;">
                             <div>
                                 <label class="input-label">Frequency</label>
                                 <select class="input-select" id="frequency">
@@ -420,23 +540,19 @@
                                 <input type="number" class="input-field" id="max-retries" value="3" min="1" max="5">
                             </div>
                         </div>
-
-                        <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom:20px;">
                             <label class="input-label">Your UPI ID</label>
-                            <input type="text" class="input-field" id="payer-upi" placeholder="name@upi">
+                            <input type="text" class="input-field" id="payer-upi" placeholder="yourname@upi">
                         </div>
-
-                        <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom:20px;">
                             <label class="input-label">Merchant VPA</label>
                             <input type="text" class="input-field" id="merchant-vpa" placeholder="merchant@upi">
                         </div>
-
-                        <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom:20px;">
                             <label class="input-label">Merchant Name</label>
-                            <input type="text" class="input-field" id="merchant-name" placeholder="Merchant Name">
+                            <input type="text" class="input-field" id="merchant-name" placeholder="e.g. Netflix India">
                         </div>
-
-                        <div class="grid-2-sm" style="margin-bottom: 28px;">
+                        <div class="grid-2-sm" style="margin-bottom:28px;">
                             <div>
                                 <label class="input-label">Start Date</label>
                                 <input type="date" class="input-field" id="start-date">
@@ -446,110 +562,140 @@
                                 <input type="date" class="input-field" id="end-date">
                             </div>
                         </div>
-
-                        <button class="btn-primary" onclick="createMandate()" style="width: 100%; justify-content: center;">
-                            Create Mandate
+                        <button class="btn-primary btn-full" onclick="createMandate()">
+                            Activate Mandate
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg>
                         </button>
                     </div>
-
-                    <!-- Mandate List -->
-                    <div id="mandate-list" class="surface" style="margin-top: 20px; display: none;">
-                        <p class="caption" style="margin-bottom: 20px;">Your Mandates</p>
-                        <div id="mandates-container"></div>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="section-divider"></div>
-
-    <!-- Dashboard / API Monitor Section -->
-    <section class="section" id="dashboard">
-        <div class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80');"></div>
-        <div class="bg-img-overlay"></div>
+    <!-- ═══════════════════════════════════════════
+         DASHBOARD / MONITOR SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="section section-story section-dashboard" id="dashboard">
+        <div class="section-bg-texture"></div>
+        <div class="section-number-bg">04</div>
         <div class="section-inner">
-            <span class="num-badge">Platform Monitor</span>
-            <h2 class="display-lg" style="margin-bottom: 48px;">Service<br>Dashboard</h2>
 
-            <!-- Service Health Grid -->
-            <div class="grid-3" style="margin-bottom: 64px;">
-                <div class="service-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div class="story-header reveal">
+                <div class="story-meta">
+                    <span class="story-chapter">Chapter 04</span>
+                    <span class="story-slash">/</span>
+                    <span class="story-title-sm">Platform Monitor</span>
+                </div>
+                <h2 class="display-lg story-heading">System<br><em class="accent-italic">Status</em></h2>
+                <p class="body-lg story-desc">
+                    Real-time service health. API surface documentation. Everything running, everything visible.
+                </p>
+            </div>
+
+            <!-- Health Grid -->
+            <div class="health-grid reveal reveal-delay-1">
+                <div class="health-card">
+                    <div class="health-card-top">
                         <div>
-                            <p class="caption" style="margin-bottom: 8px;">KYC Service</p>
-                            <p class="heading" style="font-size: 24px;">Port 8001</p>
+                            <p class="caption" style="margin-bottom:8px;">KYC Service</p>
+                            <p class="heading">Port 8001</p>
                         </div>
-                        <span id="health-kyc" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                        <div class="health-dot-wrap">
+                            <span class="health-dot" id="health-kyc"></span>
+                            <span class="health-pulse" id="pulse-kyc"></span>
+                        </div>
                     </div>
-                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span class="caption">Status</span>
-                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    <div class="health-divider"></div>
+                    <div class="health-meta">
+                        <div class="health-meta-item"><span class="caption">Engine</span><span class="body" style="color:var(--text-primary);">FastAPI</span></div>
+                        <div class="health-meta-item"><span class="caption">OCR</span><span class="body" style="color:var(--text-primary);">Tesseract</span></div>
+                        <div class="health-meta-item"><span class="caption">Face</span><span class="body" style="color:var(--text-primary);">DeepFace</span></div>
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div class="health-card">
+                    <div class="health-card-top">
                         <div>
-                            <p class="caption" style="margin-bottom: 8px;">Credit Score</p>
-                            <p class="heading" style="font-size: 24px;">Port 8002</p>
+                            <p class="caption" style="margin-bottom:8px;">Credit Score</p>
+                            <p class="heading">Port 8002</p>
                         </div>
-                        <span id="health-credit" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                        <div class="health-dot-wrap">
+                            <span class="health-dot" id="health-credit"></span>
+                            <span class="health-pulse" id="pulse-credit"></span>
+                        </div>
                     </div>
-                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span class="caption">Status</span>
-                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    <div class="health-divider"></div>
+                    <div class="health-meta">
+                        <div class="health-meta-item"><span class="caption">Model</span><span class="body" style="color:var(--text-primary);">CIBIL-Style</span></div>
+                        <div class="health-meta-item"><span class="caption">Range</span><span class="body" style="color:var(--text-primary);">300–900</span></div>
+                        <div class="health-meta-item"><span class="caption">DB</span><span class="body" style="color:var(--text-primary);">Supabase</span></div>
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div class="health-card">
+                    <div class="health-card-top">
                         <div>
-                            <p class="caption" style="margin-bottom: 8px;">UPI Mandate</p>
-                            <p class="heading" style="font-size: 24px;">Port 8003</p>
+                            <p class="caption" style="margin-bottom:8px;">UPI Mandate</p>
+                            <p class="heading">Port 8003</p>
                         </div>
-                        <span id="health-upi" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></span>
+                        <div class="health-dot-wrap">
+                            <span class="health-dot" id="health-upi"></span>
+                            <span class="health-pulse" id="pulse-upi"></span>
+                        </div>
                     </div>
-                    <div style="height: 1px; background: var(--border); margin-bottom: 16px;"></div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span class="caption">Status</span>
-                        <span class="body" style="color: var(--text-primary);">Active</span>
+                    <div class="health-divider"></div>
+                    <div class="health-meta">
+                        <div class="health-meta-item"><span class="caption">Queue</span><span class="body" style="color:var(--text-primary);">Redis</span></div>
+                        <div class="health-meta-item"><span class="caption">Retry</span><span class="body" style="color:var(--text-primary);">Exp. Backoff</span></div>
+                        <div class="health-meta-item"><span class="caption">Notif</span><span class="body" style="color:var(--text-primary);">Multi-Channel</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- API Endpoints -->
-            <div class="surface">
-                <p class="caption" style="margin-bottom: 32px;">API Endpoints</p>
-                <div class="grid-3">
-                    <div>
-                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">KYC Service</p>
+            <!-- API Reference -->
+            <div class="api-reference reveal reveal-delay-2">
+                <div class="api-reference-header">
+                    <h3 class="heading" style="font-size:20px;">API Reference</h3>
+                    <span class="caption">REST / JSON</span>
+                </div>
+                <div class="api-grid">
+                    <div class="api-group">
+                        <div class="api-group-title">
+                            <span class="api-service-dot" style="background:var(--accent)"></span>
+                            <span class="heading" style="font-size:15px; color:var(--accent);">KYC Service</span>
+                        </div>
                         <div class="code-block">
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/documents/upload</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/documents/{id}/ocr</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/face-match/verify</span></div>
-                            <div class="api-row"><span class="method">GET</span> <span class="path">/verification/status/{id}</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/kyc/documents/upload</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/kyc/documents/{id}/ocr</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/kyc/face-match/verify</span></div>
+                            <div class="api-row"><span class="method get">GET</span><span class="path">/kyc/verification/status/{id}</span></div>
+                            <div class="api-row"><span class="method get">GET</span><span class="path">/kyc/documents/user/{id}</span></div>
                         </div>
                     </div>
-                    <div>
-                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">Credit Score</p>
+                    <div class="api-group">
+                        <div class="api-group-title">
+                            <span class="api-service-dot" style="background:var(--success)"></span>
+                            <span class="heading" style="font-size:15px; color:var(--success);">Credit Score</span>
+                        </div>
                         <div class="code-block">
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/financial-data/submit</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/score/compute/{id}</span></div>
-                            <div class="api-row"><span class="method">GET</span> <span class="path">/score/user/{id}</span></div>
-                            <div class="api-row"><span class="method">GET</span> <span class="path">/report/user/{id}</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/credit/financial-data/submit</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/credit/score/compute/{id}</span></div>
+                            <div class="api-row"><span class="method get">GET</span><span class="path">/credit/score/user/{id}</span></div>
+                            <div class="api-row"><span class="method get">GET</span><span class="path">/credit/score/user/{id}/history</span></div>
+                            <div class="api-row"><span class="method get">GET</span><span class="path">/credit/report/user/{id}</span></div>
                         </div>
                     </div>
-                    <div>
-                        <p class="heading" style="font-size: 16px; color: var(--accent); margin-bottom: 20px;">UPI Mandate</p>
+                    <div class="api-group">
+                        <div class="api-group-title">
+                            <span class="api-service-dot" style="background:#7a6aaa"></span>
+                            <span class="heading" style="font-size:15px; color:#9a8acc;">UPI Mandate</span>
+                        </div>
                         <div class="code-block">
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/mandates/create</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/mandates/{id}/pause</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/retry/execute/{id}</span></div>
-                            <div class="api-row"><span class="method">POST</span> <span class="path">/notifications/send</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/upi/mandates/create</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/upi/mandates/{id}/pause</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/upi/mandates/{id}/revoke</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/upi/retry/execute/{id}</span></div>
+                            <div class="api-row"><span class="method post">POST</span><span class="path">/upi/notifications/send</span></div>
                         </div>
                     </div>
                 </div>
@@ -557,11 +703,33 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-inner">
-            <p class="caption">FINFLOW Platform — Python + FastAPI + Supabase</p>
-            <p class="caption">v1.0.0</p>
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer-new">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <p class="footer-logo">FINFLOW</p>
+                <p class="body" style="max-width:280px; margin-top:12px;">Three microservices. One platform. Built on Python, FastAPI, and Supabase.</p>
+            </div>
+            <div class="footer-links-group">
+                <p class="caption" style="margin-bottom:16px;">Platform</p>
+                <a href="#kyc" class="footer-link">KYC Verification</a>
+                <a href="#credit" class="footer-link">Credit Scoring</a>
+                <a href="#upi" class="footer-link">UPI Mandates</a>
+                <a href="#dashboard" class="footer-link">System Monitor</a>
+            </div>
+            <div class="footer-links-group">
+                <p class="caption" style="margin-bottom:16px;">Stack</p>
+                <span class="footer-link">FastAPI</span>
+                <span class="footer-link">PostgreSQL</span>
+                <span class="footer-link">Docker</span>
+                <span class="footer-link">Redis</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="caption">FINFLOW Platform — Python · FastAPI · Supabase · Docker</p>
+            <p class="caption">v1.0.0 · 2025</p>
         </div>
     </footer>
 
