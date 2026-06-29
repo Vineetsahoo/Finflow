@@ -11,6 +11,32 @@
 </head>
 <body>
 
+    <!-- ═══════════════════════════════════════════
+         FLOATING ORB — fixed, scroll-driven
+    ═══════════════════════════════════════════ -->
+    <div class="orb-wrapper" id="orbWrapper" style="
+        --orb-color: #c96e3a;
+        --orb-color-bright: #e8884a;
+        --orb-glow: rgba(201,110,58,0.45);
+        --orb-glow-far: rgba(201,110,58,0.15);
+        --orb-ring: rgba(201,110,58,0.35);
+        --orb-ring-dashed: rgba(201,110,58,0.12);
+        --orb-scale: 1;
+        --orb-opacity: 1;
+    ">
+        <div class="orb-visual" id="orbVisual">
+            <div class="visual-core" id="orbCore"></div>
+            <div class="visual-ring ring-1" id="orbRing1"></div>
+            <div class="visual-ring ring-2" id="orbRing2"></div>
+            <div class="visual-ring ring-3" id="orbRing3"></div>
+            <div class="orb-label" id="orbLabel"></div>
+            <div class="visual-particles">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="nav" id="mainNav">
         <a href="#hero" class="nav-logo">FINFLOW</a>
@@ -40,16 +66,7 @@
                 <span class="line"><span>FIN</span></span>
                 <span class="line"><span>FLOW</span></span>
             </h1>
-            <div class="hero-visual" id="heroVisual">
-                <div class="visual-core"></div>
-                <div class="visual-ring ring-1"></div>
-                <div class="visual-ring ring-2"></div>
-                <div class="visual-ring ring-3"></div>
-                <div class="visual-particles">
-                    <span></span><span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span><span></span>
-                </div>
-            </div>
+            <!-- orb is now the global fixed #orbWrapper -->
             <div class="hero-desc-editorial">
                 <p class="body-lg">KYC verification, credit scoring, and UPI mandate management — three microservices orchestrated into a single deployable platform.</p>
                 <div style="margin-top: 32px; display:flex; gap:16px; flex-wrap:wrap;">

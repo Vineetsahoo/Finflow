@@ -56,21 +56,206 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // ═══════════════════════════════════════
-//  HERO PARALLAX
+//  SCROLL-DRIVEN ORB ENGINE
 // ═══════════════════════════════════════
-const heroVisual = document.getElementById('heroVisual');
-const heroSection = document.getElementById('hero');
-if (heroSection && heroVisual) {
-    heroSection.addEventListener('mousemove', (e) => {
-        const rect = heroSection.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        heroVisual.style.transform = `translate(calc(-50% + ${x * 30}px), calc(-50% + ${y * 30}px))`;
-    });
-    heroSection.addEventListener('mouseleave', () => {
-        heroVisual.style.transform = 'translate(-50%, -50%)';
-    });
+const orbWrapper = document.getElementById('orbWrapper');
+const orbVisual  = document.getElementById('orbVisual');
+const orbLabel   = document.getElementById('orbLabel');
+
+// Section color themes
+const ORB_THEMES = {
+    hero: {
+        color:       '#c96e3a',
+        colorBright: '#e8884a',
+        glow:        'rgba(201,110,58,0.45)',
+        glowFar:     'rgba(201,110,58,0.15)',
+        ring:        'rgba(201,110,58,0.35)',
+        ringDashed:  'rgba(201,110,58,0.12)',
+        label:       '',
+    },
+    kyc: {
+        color:       '#c96e3a',
+        colorBright: '#e8994d',
+        glow:        'rgba(201,110,58,0.50)',
+        glowFar:     'rgba(201,110,58,0.18)',
+        ring:        'rgba(201,110,58,0.40)',
+        ringDashed:  'rgba(201,110,58,0.14)',
+        label:       'IDENTITY',
+    },
+    credit: {
+        color:       '#5a8a46',
+        colorBright: '#78b05e',
+        glow:        'rgba(90,138,70,0.50)',
+        glowFar:     'rgba(90,138,70,0.18)',
+        ring:        'rgba(90,138,70,0.40)',
+        ringDashed:  'rgba(90,138,70,0.14)',
+        label:       'CREDIT',
+    },
+    upi: {
+        color:       '#7a5aaa',
+        colorBright: '#9c7acc',
+        glow:        'rgba(122,90,170,0.50)',
+        glowFar:     'rgba(122,90,170,0.18)',
+        ring:        'rgba(122,90,170,0.40)',
+        ringDashed:  'rgba(122,90,170,0.14)',
+        label:       'MANDATE',
+    },
+    dashboard: {
+        color:       '#4a7aaa',
+        colorBright: '#6a9acc',
+        glow:        'rgba(74,122,170,0.50)',
+        glowFar:     'rgba(74,122,170,0.18)',
+        ring:        'rgba(74,122,170,0.40)',
+        ringDashed:  'rgba(74,122,170,0.14)',
+        label:       'STATUS',
+    },
+};
+
+// Target state — where orb WANTS to be
+const orbTarget = { x: 50, y: 50, scale: 1, opacity: 1 };
+// Current interpolated state
+const orbCurrent = { x: 50, y: 50, scale: 1, opacity: 1 };
+
+let lastSection = 'hero';
+let orbRafId = null;
+
+function applyTheme(key) {
+    if (key === lastSection) return;
+    lastSection = key;
+    const t = ORB_THEMES[key] || ORB_THEMES.hero;
+    const el = orbWrapper;
+    el.style.setProperty('--orb-color',       t.color);
+    el.style.setProperty('--orb-color-bright', t.colorBright);
+    el.style.setProperty('--orb-glow',         t.glow);
+    el.style.setProperty('--orb-glow-far',     t.glowFar);
+    el.style.setProperty('--orb-ring',         t.ring);
+    el.style.setProperty('--orb-ring-dashed',  t.ringDashed);
+
+    // Label
+    if (orbLabel) {
+        orbLabel.textContent = t.label;
+        orbLabel.classList.toggle('visible', t.label !== '');
+    }
+
+    // Entry pulse
+    if (orbVisual) {
+        orbVisual.classList.remove('entering');
+        void orbVisual.offsetWidth; // reflow
+        orbVisual.classList.add('entering');
+        setTimeout(() => orbVisual.classList.remove('entering'), 800);
+    }
 }
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function tickOrb() {
+    const ease = 0.07; // lower = floatier, higher = snappier
+    orbCurrent.x       = lerp(orbCurrent.x,       orbTarget.x,       ease);
+    orbCurrent.y       = lerp(orbCurrent.y,        orbTarget.y,       ease);
+    orbCurrent.scale   = lerp(orbCurrent.scale,    orbTarget.scale,   ease);
+    orbCurrent.opacity = lerp(orbCurrent.opacity,  orbTarget.opacity, ease);
+
+    if (orbWrapper) {
+        orbWrapper.style.left    = orbCurrent.x + 'vw';
+        orbWrapper.style.top     = orbCurrent.y + 'vh';
+        orbWrapper.style.setProperty('--orb-scale',   orbCurrent.scale.toFixed(4));
+        orbWrapper.style.setProperty('--orb-opacity',  orbCurrent.opacity.toFixed(4));
+    }
+
+    orbRafId = requestAnimationFrame(tickOrb);
+}
+
+function updateOrbFromScroll() {
+    const scrollY = window.scrollY;
+    const winH    = window.innerHeight;
+
+    // Section offsets
+    const secHero  = document.getElementById('hero');
+    const secKyc   = document.getElementById('kyc');
+    const secCredit= document.getElementById('credit');
+    const secUpi   = document.getElementById('upi');
+    const secDash  = document.getElementById('dashboard');
+
+    if (!secHero) return;
+
+    const heroH   = secHero.offsetHeight;
+    const kycTop  = secKyc   ? secKyc.offsetTop   : heroH;
+    const credTop = secCredit? secCredit.offsetTop : kycTop   + winH;
+    const upiTop  = secUpi   ? secUpi.offsetTop    : credTop  + winH;
+    const dashTop = secDash  ? secDash.offsetTop   : upiTop   + winH;
+    const pageH   = document.body.scrollHeight;
+
+    // ── HERO ──────────────────────────────────────
+    if (scrollY < kycTop - winH * 0.3) {
+        const heroProgress = Math.min(scrollY / (heroH * 0.6), 1); // 0→1 as hero scrolls out
+        applyTheme('hero');
+
+        // Orb stays centered in hero, slowly drifts up as hero scrolls
+        orbTarget.x       = 50;
+        orbTarget.y       = 50 - heroProgress * 8;   // drifts up slightly
+        orbTarget.scale   = 1 - heroProgress * 0.15;  // gently shrinks
+        orbTarget.opacity = 1;
+
+    // ── KYC ───────────────────────────────────────
+    } else if (scrollY < credTop - winH * 0.3) {
+        const t = Math.min((scrollY - (kycTop - winH * 0.3)) / winH, 1);
+        applyTheme('kyc');
+
+        // Orb floats to left-center, slightly above middle
+        orbTarget.x       = lerp(50, 18, smoothStep(t));
+        orbTarget.y       = lerp(42, 35, smoothStep(t));
+        orbTarget.scale   = lerp(0.85, 0.55, smoothStep(t));
+        orbTarget.opacity = 1;
+
+    // ── CREDIT ────────────────────────────────────
+    } else if (scrollY < upiTop - winH * 0.3) {
+        const t = Math.min((scrollY - (credTop - winH * 0.3)) / winH, 1);
+        applyTheme('credit');
+
+        // Orb floats to right side
+        orbTarget.x       = lerp(18, 82, smoothStep(t));
+        orbTarget.y       = lerp(35, 38, smoothStep(t));
+        orbTarget.scale   = lerp(0.55, 0.50, smoothStep(t));
+        orbTarget.opacity = 1;
+
+    // ── UPI ───────────────────────────────────────
+    } else if (scrollY < dashTop - winH * 0.3) {
+        const t = Math.min((scrollY - (upiTop - winH * 0.3)) / winH, 1);
+        applyTheme('upi');
+
+        // Orb swings back to left, slightly lower
+        orbTarget.x       = lerp(82, 20, smoothStep(t));
+        orbTarget.y       = lerp(38, 42, smoothStep(t));
+        orbTarget.scale   = lerp(0.50, 0.45, smoothStep(t));
+        orbTarget.opacity = 1;
+
+    // ── DASHBOARD ─────────────────────────────────
+    } else if (scrollY < pageH - winH * 1.1) {
+        const t = Math.min((scrollY - (dashTop - winH * 0.3)) / winH, 1);
+        applyTheme('dashboard');
+
+        // Orb retreats to top-right corner, small
+        orbTarget.x       = lerp(20, 88, smoothStep(t));
+        orbTarget.y       = lerp(42, 12, smoothStep(t));
+        orbTarget.scale   = lerp(0.45, 0.22, smoothStep(t));
+        orbTarget.opacity = lerp(1, 0.6, smoothStep(t));
+
+    // ── FOOTER — fade out ─────────────────────────
+    } else {
+        orbTarget.opacity = 0;
+    }
+}
+
+// Smooth easing (Ken Perlin's smoothstep)
+function smoothStep(t) {
+    t = Math.max(0, Math.min(1, t));
+    return t * t * (3 - 2 * t);
+}
+
+// Wire scroll → target update, rAF → render
+window.addEventListener('scroll', updateOrbFromScroll, { passive: true });
+updateOrbFromScroll(); // set initial targets
+tickOrb();             // start render loop
 
 // ═══════════════════════════════════════
 //  UPLOAD ZONE

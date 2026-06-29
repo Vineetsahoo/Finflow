@@ -228,8 +228,81 @@ body {
 }
 
 /* ═══════════════════════════════════════
-   HERO — EDITORIAL
+   GLOBAL FLOATING ORB
 ═══════════════════════════════════════ */
+.orb-wrapper {
+    position: fixed;
+    /* JS sets --orb-x, --orb-y, --orb-scale, --orb-opacity */
+    left: var(--orb-x, 50%);
+    top:  var(--orb-y, 50%);
+    width: 0; height: 0;          /* size comes from children */
+    z-index: 5;
+    pointer-events: none;
+    /* no transition here — JS lerps raw values each rAF */
+}
+
+.orb-visual {
+    position: absolute;
+    width: 520px; height: 520px;
+    transform: translate(-50%, -50%) scale(var(--orb-scale, 1));
+    opacity: var(--orb-opacity, 1);
+    transition:
+        transform 0.05s linear,   /* scale snaps per frame */
+        opacity   0.6s ease;
+    will-change: transform, opacity;
+}
+
+/* The label that pops in when entering a section */
+.orb-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--orb-color, var(--accent));
+    opacity: 0; white-space: nowrap;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+.orb-label.visible { opacity: 0.7; }
+
+/* Core inherits --orb-color injected by JS */
+#orbCore {
+    background: radial-gradient(circle at 35% 35%, var(--orb-color-bright, var(--accent-bright)), var(--orb-color, var(--accent)));
+    box-shadow:
+        0 0 100px var(--orb-glow, rgba(201,110,58,0.45)),
+        0 0 200px var(--orb-glow-far, rgba(201,110,58,0.15)),
+        inset -20px -20px 60px rgba(0,0,0,0.3),
+        inset 10px 10px 40px rgba(255,255,255,0.08);
+    transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+
+/* Rings inherit --orb-ring-color */
+#orbRing1 {
+    border-color: var(--orb-ring, rgba(201,110,58,0.35));
+    border-top-color: transparent; border-left-color: transparent;
+    transition: border-color 0.8s ease;
+}
+#orbRing2 {
+    border-color: var(--orb-ring, rgba(201,110,58,0.22));
+    border-bottom-color: var(--orb-color, var(--accent));
+    border-right-color: transparent;
+    transition: border-color 0.8s ease;
+}
+#orbRing3 {
+    border-color: var(--orb-ring-dashed, rgba(201,110,58,0.12));
+    transition: border-color 0.8s ease;
+}
+
+/* Distortion on section entry */
+.orb-visual.entering #orbCore {
+    animation: orbEnterPulse 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes orbEnterPulse {
+    0%   { transform: translate(-50%,-50%) scale(1); }
+    40%  { transform: translate(-50%,-50%) scale(1.22); }
+    70%  { transform: translate(-50%,-50%) scale(0.94); }
+    100% { transform: translate(-50%,-50%) scale(1); }
+}
 .hero { min-height: 100vh; position: relative; overflow: hidden; }
 .hero-editorial {
     min-height: 100vh; display: flex; align-items: center;
@@ -292,12 +365,9 @@ body {
 .hero-title-editorial .line:nth-child(1) span { animation-delay: 0.3s; }
 .hero-title-editorial .line:nth-child(2) span { animation-delay: 0.5s; }
 
-/* Hero Visual */
+/* Hero Visual — now a global fixed orb, .hero-visual is unused */
 .hero-visual {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    width: 520px; height: 520px; z-index: 1; pointer-events: none;
-    transition: transform 0.3s ease;
+    display: none; /* orb lives in #orbWrapper now */
 }
 .visual-core {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
