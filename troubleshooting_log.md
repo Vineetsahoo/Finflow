@@ -94,3 +94,58 @@ This document serves as a historical record of all the major errors encountered 
   ```bash
   minikube service frontend --url
   ```
+
+---
+
+## 10. Three.js Orb Teleports to Wrong Position on Page Load
+
+* **Area:** Frontend — `frontend/index.js` (Three.js scroll-driven 3D scene)
+* **Symptom:** The 3D orb sphere appeared stuck at the very top of the viewport instead of center on the hero section, and failed to track sections correctly when scrolling.
+* **Root Cause (four compounding bugs):**
+
+### Bug 10a — `scene.add(...).position.set(...)` Called on Scene, Not Light
+* **Error:** `scene.add(new THREE.DirectionalLight(...)).position.set(0, 5, -3)` — `scene.add()` returns the **Scene object**, not the added light. Calling `.position.set()` on the Scene moved the entire scene's origin, displacing every object in the world.
+* **Fix:** Split into two separate lines so `.position.set()` is called on the light itself.
+  ```javascript
+  // BROKEN
+  scene.add(new THREE.DirectionalLight(0xffffff, 0.8)).position.set(0, 5, -3);
+
+  // FIXED
+  const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  rimLight.position.set(0, 5, -3);
+  scene.add(rimLight);
+  ```
+
+### Bug 10b — `updateScroll()` Called Before DOM Layout Is Ready
+* **Error:** `updateScroll()` was invoked synchronously during script execution, before the browser had finished calculating section heights. `element.offsetTop` for `#kyc`, `#credit`, `#upi`, and `#dashboard` all returned `0`, causing the orb to treat every section as starting at the top.
+* **Fix:** Deferred the first `updateScroll()` call to the first animation frame via a `firstFrame` flag, by which time the DOM layout is fully computed.
+  ```javascript
+  let firstFrame = true;
+
+  function animate() {
+      if (firstFrame) {
+          firstFrame = false;
+          updateScroll();           // DOM layout is ready now
+          S.cX = S.tX; S.cY = S.tY; // snap, no lerp on first frame
+          S.cSc = S.tSc; S.cOp = S.tOp;
+      }
+      // ...rest of loop
+  }
+  ```
+
+### Bug 10c — Lerp Interpolating from `(0, 0)` on First Frame
+* **Error:** The lerp state `cX` and `cY` were initialised to `0`. On the first frame, the orb lerped from world origin `(0, 0)` to the computed target, creating a visible snap/jump every time the page loaded.
+* **Fix:** After `updateScroll()` sets the targets on the first frame, immediately snap `cX/cY/cSc/cOp` to those targets — skipping the lerp only on frame 1, so all subsequent frames animate smoothly.
+
+### Bug 10d — `screenToWorld` Using `camera.aspect` Before Renderer Was Initialised
+* **Error:** The `screenToWorld()` helper used `camera.aspect` to convert screen percentages to Three.js world coordinates. When called before `renderer.setSize()` had run, `camera.aspect` was still `1` (the Three.js default), producing wrong X positions regardless of the actual viewport ratio.
+* **Fix:** Replaced `camera.aspect` with `window.innerWidth / window.innerHeight`, which is always correct and does not depend on renderer state.
+  ```javascript
+  // BROKEN
+  const halfW = halfH * camera.aspect;
+
+  // FIXED
+  const halfW = halfH * (window.innerWidth / window.innerHeight);
+  ```
+
+* **Files Changed:** `frontend/index.js`
