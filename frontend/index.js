@@ -215,37 +215,66 @@ observeRevealElements();
     function lp(a, b, t) { return a + (b - a) * t; }
     function ss(t) { t = Math.max(0, Math.min(1, t)); return t*t*(3-2*t); }
 
+    // Convert screen % (0=left/top, 100=right/bottom) to Three.js world coords
+    // Camera at z=5, FOV 60 → visible height = 2*5*tan(30°) ≈ 5.774
+    function screenToWorld(xPct, yPct) {
+        const h = 2 * 5 * Math.tan(THREE.MathUtils.degToRad(30));
+        const w = h * camera.aspect;
+        // xPct 50 = center, yPct 50 = center
+        // Three.js Y+ is up, so invert: yPct 0 = top = +h/2
+        const wx = (xPct / 100 - 0.5) * w;
+        const wy = -(yPct / 100 - 0.5) * h;
+        return { x: wx, y: wy };
+    }
+
     function updateScroll() {
         const sy = window.scrollY, wH = window.innerHeight;
-        const g = id => document.getElementById(id)?.offsetTop ?? 99999;
+        const g  = id => document.getElementById(id)?.offsetTop ?? 99999;
         const kT = g('kyc'), crT = g('credit'), uT = g('upi'), dT = g('dashboard');
-        const hw = (5 * Math.tan(THREE.MathUtils.degToRad(30))) * camera.aspect;
-        const hh =  5 * Math.tan(THREE.MathUtils.degToRad(30));
 
-        if (sy < kT - wH*0.4) {
+        let xPct, yPct, sc, op;
+
+        if (sy < kT - wH * 0.4) {
+            // HERO — dead center
             setSection('hero');
-            S.tX = 0; S.tY = 0; S.tSc = 1.0; S.tOp = 1;
-        } else if (sy < crT - wH*0.4) {
-            const t = Math.min((sy-(kT-wH*0.4))/wH, 1);
+            xPct = 50; yPct = 50; sc = 1.0; op = 1;
+
+        } else if (sy < crT - wH * 0.4) {
+            // KYC — slides to left-center
+            const t = Math.min((sy - (kT - wH*0.4)) / wH, 1);
             setSection('kyc');
-            S.tX = lp(0,-hw*0.55,ss(t)); S.tY = lp(0,hh*0.15,ss(t));
-            S.tSc = lp(1.0,0.62,ss(t)); S.tOp = 1;
-        } else if (sy < uT - wH*0.4) {
-            const t = Math.min((sy-(crT-wH*0.4))/wH, 1);
+            xPct = lp(50, 22, ss(t));
+            yPct = lp(50, 42, ss(t));
+            sc   = lp(1.0, 0.60, ss(t)); op = 1;
+
+        } else if (sy < uT - wH * 0.4) {
+            // CREDIT — swings to right-center
+            const t = Math.min((sy - (crT - wH*0.4)) / wH, 1);
             setSection('credit');
-            S.tX = lp(-hw*0.55,hw*0.55,ss(t)); S.tY = lp(hh*0.15,hh*0.10,ss(t));
-            S.tSc = lp(0.62,0.58,ss(t)); S.tOp = 1;
-        } else if (sy < dT - wH*0.4) {
-            const t = Math.min((sy-(uT-wH*0.4))/wH, 1);
+            xPct = lp(22, 78, ss(t));
+            yPct = lp(42, 45, ss(t));
+            sc   = lp(0.60, 0.55, ss(t)); op = 1;
+
+        } else if (sy < dT - wH * 0.4) {
+            // UPI — swings back left
+            const t = Math.min((sy - (uT - wH*0.4)) / wH, 1);
             setSection('upi');
-            S.tX = lp(hw*0.55,-hw*0.50,ss(t)); S.tY = lp(hh*0.10,-hh*0.05,ss(t));
-            S.tSc = lp(0.58,0.52,ss(t)); S.tOp = 1;
+            xPct = lp(78, 20, ss(t));
+            yPct = lp(45, 48, ss(t));
+            sc   = lp(0.55, 0.50, ss(t)); op = 1;
+
         } else {
-            const t = Math.min((sy-(dT-wH*0.4))/wH, 1);
+            // DASHBOARD — retreats to top-right corner
+            const t = Math.min((sy - (dT - wH*0.4)) / wH, 1);
             setSection('dashboard');
-            S.tX = lp(-hw*0.50,hw*0.72,ss(t)); S.tY = lp(-hh*0.05,hh*0.72,ss(t));
-            S.tSc = lp(0.52,0.24,ss(t)); S.tOp = lp(1,0.55,ss(t));
+            xPct = lp(20, 85, ss(t));
+            yPct = lp(48, 15, ss(t));
+            sc   = lp(0.50, 0.22, ss(t));
+            op   = lp(1, 0.55, ss(t));
         }
+
+        const wp = screenToWorld(xPct, yPct);
+        S.tX = wp.x; S.tY = wp.y; S.tSc = sc; S.tOp = op;
     }
 
     window.addEventListener('scroll', updateScroll, { passive: true });
@@ -328,41 +357,6 @@ observeRevealElements();
     }
     animate();
 })();
-        colorBright: '#e8884a',
-        glow:        'rgba(201,110,58,0.45)',
-        glowFar:     'rgba(201,110,58,0.15)',
-        ring:        'rgba(201,110,58,0.35)',
-        ringDashed:  'rgba(201,110,58,0.12)',
-        label:       '',
-    },
-    kyc: {
-        color:       '#c96e3a',
-        colorBright: '#e8994d',
-        glow:        'rgba(201,110,58,0.50)',
-        glowFar:     'rgba(201,110,58,0.18)',
-        ring:        'rgba(201,110,58,0.40)',
-        ringDashed:  'rgba(201,110,58,0.14)',
-        label:       'IDENTITY',
-    },
-    credit: {
-        color:       '#5a8a46',
-        colorBright: '#78b05e',
-        glow:        'rgba(90,138,70,0.50)',
-        glowFar:     'rgba(90,138,70,0.18)',
-        ring:        'rgba(90,138,70,0.40)',
-        ringDashed:  'rgba(90,138,70,0.14)',
-        label:       'CREDIT',
-    },
-    upi: {
-        color:       '#7a5aaa',
-        colorBright: '#9c7acc',
-        glow:        'rgba(122,90,170,0.50)',
-        glowFar:     'rgba(122,90,170,0.18)',
-        ring:        'rgba(122,90,170,0.40)',
-        ringDashed:  'rgba(122,90,170,0.14)',
-        label:       'MANDATE',
-    },
-    dashboard: {
 
 // ═══════════════════════════════════════
 //  UPLOAD ZONE

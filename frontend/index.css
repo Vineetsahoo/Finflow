@@ -248,9 +248,8 @@ body {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 1;
+    z-index: 10;          /* above sections so orb is always visible */
+    pointer-events: none; /* never blocks clicks */
 }
 
 /* ═══════════════════════════════════════
@@ -265,7 +264,9 @@ body {
     justify-content: center; padding: 0; position: relative; overflow: hidden; z-index: 1;
 }
 .hero-bg-editorial {
-    position: absolute; inset: 0; background: var(--bg-primary); z-index: 0;
+    position: absolute; inset: 0;
+    background: rgba(15, 12, 10, 0.55); /* semi-transparent — orb sphere shines through */
+    z-index: 0;
 }
 .hero-grid-editorial {
     position: absolute; inset: 0;
@@ -431,6 +432,7 @@ body {
     display: flex; align-items: center; gap: 32px;
     padding: 64px 6vw; max-width: 1600px; margin: 0 auto;
     position: relative; z-index: 1;
+    background: transparent; /* let orb show here */
 }
 .chapter-line { flex: 1; height: 1px; background: var(--border); }
 .chapter-label { text-align: center; white-space: nowrap; }
@@ -446,7 +448,7 @@ body {
 .marquee-belt {
     width: 100%; overflow: hidden; border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border); padding: 18px 0;
-    background: var(--bg-secondary);
+    background: rgba(26, 20, 16, 0.6); /* semi-transparent */
     position: relative; z-index: 1;
 }
 .marquee-track {
@@ -477,10 +479,25 @@ body {
     min-height: 100vh; width: 100%; position: relative;
     padding: 120px 6vw; display: block; overflow: hidden;
     z-index: 1;
-    background: var(--bg-primary);
+    /* Dark enough to read, transparent enough for orb glow to bleed through */
+    background: rgba(15, 12, 10, 0.78);
+}
+
+/* Each section gets a unique subtle tint matching orb color */
+.section-story#kyc {
+    background: rgba(15, 12, 10, 0.80);
+}
+.section-story.section-credit {
+    background: rgba(10, 14, 10, 0.80);
+}
+.section-story.section-upi {
+    background: rgba(10, 10, 16, 0.80);
+}
+.section-story.section-dashboard {
+    background: rgba(10, 12, 16, 0.80);
 }
 .section-inner {
-    width: 100%; max-width: 1400px; margin: 0 auto; position: relative; z-index: 2;
+    width: 100%; max-width: 1400px; margin: 0 auto; position: relative; z-index: 20;
 }
 .section-bg-texture {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
@@ -537,7 +554,7 @@ body {
    GLASS CARDS
 ═══════════════════════════════════════ */
 .glass-card {
-    background: var(--bg-secondary); border: 1px solid var(--border);
+    background: rgba(26, 20, 16, 0.96); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 36px;
     transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
     position: relative; overflow: hidden;
