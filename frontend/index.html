@@ -8,34 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <!-- Three.js r158 — no build step needed -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
     <!-- ═══════════════════════════════════════════
-         FLOATING ORB — fixed, scroll-driven
+         THREE.JS CANVAS — full-page fixed WebGL scene
     ═══════════════════════════════════════════ -->
-    <div class="orb-wrapper" id="orbWrapper" style="
-        --orb-color: #c96e3a;
-        --orb-color-bright: #e8884a;
-        --orb-glow: rgba(201,110,58,0.45);
-        --orb-glow-far: rgba(201,110,58,0.15);
-        --orb-ring: rgba(201,110,58,0.35);
-        --orb-ring-dashed: rgba(201,110,58,0.12);
-        --orb-scale: 1;
-        --orb-opacity: 1;
-    ">
-        <div class="orb-visual" id="orbVisual">
-            <div class="visual-core" id="orbCore"></div>
-            <div class="visual-ring ring-1" id="orbRing1"></div>
-            <div class="visual-ring ring-2" id="orbRing2"></div>
-            <div class="visual-ring ring-3" id="orbRing3"></div>
-            <div class="orb-label" id="orbLabel"></div>
-            <div class="visual-particles">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-            </div>
-        </div>
-    </div>
+    <canvas id="threeCanvas"></canvas>
 
     <!-- Navigation -->
     <nav class="nav" id="mainNav">

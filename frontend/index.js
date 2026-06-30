@@ -49,23 +49,290 @@ function smoothNav(id) {
 // ═══════════════════════════════════════
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target); // fire once, then stop watching
+        }
     });
-}, { threshold: 0.08 });
+}, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+function observeRevealElements() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+}
+observeRevealElements();
+
+// Safety net — if anything is still hidden after 2s, force it visible
+setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => el.classList.add('visible'));
+}, 2000);
 
 // ═══════════════════════════════════════
-//  SCROLL-DRIVEN ORB ENGINE
+//  THREE.JS 3D SCENE — scroll-driven
 // ═══════════════════════════════════════
-const orbWrapper = document.getElementById('orbWrapper');
-const orbVisual  = document.getElementById('orbVisual');
-const orbLabel   = document.getElementById('orbLabel');
+(function initThreeScene() {
+    const canvas = document.getElementById('threeCanvas');
+    if (!canvas || typeof THREE === 'undefined') return;
 
-// Section color themes
-const ORB_THEMES = {
-    hero: {
-        color:       '#c96e3a',
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+
+    // Scene & Camera
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 5);
+
+    // Color themes per section
+    const THEMES = {
+        hero:      { color: 0xc96e3a, emissive: 0x6b2f10, wire: 0xe8884a, ambient: 0x2a1506 },
+        kyc:       { color: 0xd4813a, emissive: 0x7a3a10, wire: 0xf0a060, ambient: 0x2a1506 },
+        credit:    { color: 0x4a9a3a, emissive: 0x1a4a10, wire: 0x70cc50, ambient: 0x061a06 },
+        upi:       { color: 0x7a4ab0, emissive: 0x3a1a70, wire: 0xaa70e0, ambient: 0x0a0620 },
+        dashboard: { color: 0x3a7ab0, emissive: 0x103a70, wire: 0x60a8e0, ambient: 0x060e20 },
+    };
+
+    // Materials
+    const mainMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(THEMES.hero.color),
+        emissive: new THREE.Color(THEMES.hero.emissive),
+        metalness: 0.7, roughness: 0.15,
+    });
+    const wireMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(THEMES.hero.wire),
+        wireframe: true, transparent: true, opacity: 0.12,
+    });
+
+    // Geometries for morphing
+    const sphereGeo = new THREE.SphereGeometry(1.4, 64, 64);
+    const icoGeo    = new THREE.IcosahedronGeometry(1.5, 1);
+    const torusGeo  = new THREE.TorusGeometry(1.1, 0.38, 32, 80);
+    const octaGeo   = new THREE.OctahedronGeometry(1.5, 2);
+    const dodecaGeo = new THREE.DodecahedronGeometry(1.3, 0);
+
+    function geoPositions(geo) { return Array.from(geo.attributes.position.array); }
+
+    const mesh     = new THREE.Mesh(sphereGeo.clone(), mainMat);
+    const wireMesh = new THREE.Mesh(sphereGeo.clone(), wireMat);
+    wireMesh.scale.setScalar(1.04);
+    scene.add(mesh);
+    scene.add(wireMesh);
+
+    // Particles
+    const N = 220;
+    const pPos   = new Float32Array(N * 3);
+    const pPhase = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+        const r = 2.6 + Math.random() * 2.8;
+        const theta = Math.random() * Math.PI * 2;
+        const phi   = Math.acos(2 * Math.random() - 1);
+        pPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+        pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+        pPos[i*3+2] = r * Math.cos(phi);
+        pPhase[i]   = Math.random() * Math.PI * 2;
+    }
+    const pBasePos = pPos.slice();
+    const pGeo  = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos.slice(), 3));
+    const pMat  = new THREE.PointsMaterial({ color: 0xe8884a, size: 0.025, transparent: true, opacity: 0.7, sizeAttenuation: true });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+
+    // Orbiting rings
+    const ring1 = new THREE.Mesh(
+        new THREE.TorusGeometry(2.1, 0.008, 8, 120),
+        new THREE.MeshBasicMaterial({ color: 0xe8884a, transparent: true, opacity: 0.25 })
+    );
+    ring1.rotation.x = Math.PI / 2.4;
+    scene.add(ring1);
+
+    const ring2 = new THREE.Mesh(
+        new THREE.TorusGeometry(2.5, 0.005, 8, 120),
+        new THREE.MeshBasicMaterial({ color: 0xe8884a, transparent: true, opacity: 0.12 })
+    );
+    ring2.rotation.x = Math.PI / 3.5;
+    ring2.rotation.z = Math.PI / 5;
+    scene.add(ring2);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(THEMES.hero.ambient, 3);
+    scene.add(ambientLight);
+    const pointLight1 = new THREE.PointLight(0xff9966, 4, 10);
+    pointLight1.position.set(3, 3, 3);
+    scene.add(pointLight1);
+    const pointLight2 = new THREE.PointLight(0x3366ff, 2, 10);
+    pointLight2.position.set(-3, -2, 2);
+    scene.add(pointLight2);
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.8)).position.set(0, 5, -3);
+
+    // Geometry morph state
+    let currentPositions = geoPositions(sphereGeo);
+    let targetPositions  = currentPositions.slice();
+    let morphT = 1;
+
+    function triggerMorph(key) {
+        const src = { hero: sphereGeo, kyc: icoGeo, credit: torusGeo, upi: octaGeo, dashboard: dodecaGeo };
+        const target = geoPositions(src[key] || sphereGeo);
+        const curLen = currentPositions.length;
+        targetPositions = Array.from({ length: curLen }, (_, i) => target[i % target.length] ?? 0);
+        morphT = 0;
+    }
+
+    function updateMorphGeometry(dt) {
+        if (morphT >= 1) return;
+        morphT = Math.min(morphT + dt * 1.2, 1);
+        const e = morphT < 0.5 ? 4*morphT*morphT*morphT : 1 - Math.pow(-2*morphT+2,3)/2;
+        const pos  = mesh.geometry.attributes.position.array;
+        const wpos = wireMesh.geometry.attributes.position.array;
+        for (let i = 0; i < pos.length; i++) {
+            const v = currentPositions[i] + (targetPositions[i] - currentPositions[i]) * e;
+            pos[i] = v; wpos[i] = v;
+        }
+        mesh.geometry.attributes.position.needsUpdate = true;
+        wireMesh.geometry.attributes.position.needsUpdate = true;
+        mesh.geometry.computeVertexNormals();
+        if (morphT >= 1) currentPositions = Array.from(pos);
+    }
+
+    // Scroll-driven state
+    const S = {
+        section: 'hero',
+        tX: 0, tY: 0, cX: 0, cY: 0,
+        tSc: 1, cSc: 1,
+        tOp: 1, cOp: 1,
+        tColor:   new THREE.Color(THEMES.hero.color),
+        tEmissive: new THREE.Color(THEMES.hero.emissive),
+        tWire:    new THREE.Color(THEMES.hero.wire),
+    };
+    let lastSec = '';
+
+    function setSection(key) {
+        if (key === lastSec) return;
+        lastSec = key; S.section = key;
+        const t = THEMES[key] || THEMES.hero;
+        S.tColor.set(t.color); S.tEmissive.set(t.emissive); S.tWire.set(t.wire);
+        ambientLight.color.set(t.ambient);
+        triggerMorph(key);
+    }
+
+    function lp(a, b, t) { return a + (b - a) * t; }
+    function ss(t) { t = Math.max(0, Math.min(1, t)); return t*t*(3-2*t); }
+
+    function updateScroll() {
+        const sy = window.scrollY, wH = window.innerHeight;
+        const g = id => document.getElementById(id)?.offsetTop ?? 99999;
+        const kT = g('kyc'), crT = g('credit'), uT = g('upi'), dT = g('dashboard');
+        const hw = (5 * Math.tan(THREE.MathUtils.degToRad(30))) * camera.aspect;
+        const hh =  5 * Math.tan(THREE.MathUtils.degToRad(30));
+
+        if (sy < kT - wH*0.4) {
+            setSection('hero');
+            S.tX = 0; S.tY = 0; S.tSc = 1.0; S.tOp = 1;
+        } else if (sy < crT - wH*0.4) {
+            const t = Math.min((sy-(kT-wH*0.4))/wH, 1);
+            setSection('kyc');
+            S.tX = lp(0,-hw*0.55,ss(t)); S.tY = lp(0,hh*0.15,ss(t));
+            S.tSc = lp(1.0,0.62,ss(t)); S.tOp = 1;
+        } else if (sy < uT - wH*0.4) {
+            const t = Math.min((sy-(crT-wH*0.4))/wH, 1);
+            setSection('credit');
+            S.tX = lp(-hw*0.55,hw*0.55,ss(t)); S.tY = lp(hh*0.15,hh*0.10,ss(t));
+            S.tSc = lp(0.62,0.58,ss(t)); S.tOp = 1;
+        } else if (sy < dT - wH*0.4) {
+            const t = Math.min((sy-(uT-wH*0.4))/wH, 1);
+            setSection('upi');
+            S.tX = lp(hw*0.55,-hw*0.50,ss(t)); S.tY = lp(hh*0.10,-hh*0.05,ss(t));
+            S.tSc = lp(0.58,0.52,ss(t)); S.tOp = 1;
+        } else {
+            const t = Math.min((sy-(dT-wH*0.4))/wH, 1);
+            setSection('dashboard');
+            S.tX = lp(-hw*0.50,hw*0.72,ss(t)); S.tY = lp(-hh*0.05,hh*0.72,ss(t));
+            S.tSc = lp(0.52,0.24,ss(t)); S.tOp = lp(1,0.55,ss(t));
+        }
+    }
+
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    updateScroll();
+
+    // Mouse parallax
+    let mX = 0, mY = 0;
+    window.addEventListener('mousemove', e => {
+        mX = (e.clientX/window.innerWidth  - 0.5) * 0.4;
+        mY = (e.clientY/window.innerHeight - 0.5) * 0.4;
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Render loop
+    const clock = new THREE.Clock();
+    const rotSpeeds = { hero:0.18, kyc:0.42, credit:0.22, upi:0.30, dashboard:0.12 };
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        const et = clock.getElapsedTime();
+        const ef = 1 - Math.pow(0.001, dt);
+
+        S.cX  += (S.tX  - S.cX)  * ef * 3.5;
+        S.cY  += (S.tY  - S.cY)  * ef * 3.5;
+        S.cSc += (S.tSc - S.cSc) * ef * 3.5;
+        S.cOp += (S.tOp - S.cOp) * ef * 4;
+
+        const px = S.cX + mX*0.6, py = S.cY - mY*0.6;
+        [mesh, wireMesh, particles, ring1, ring2].forEach(o => o.position.set(px, py, 0));
+
+        mesh.scale.setScalar(S.cSc);
+        wireMesh.scale.setScalar(S.cSc * 1.04);
+        ring1.scale.setScalar(S.cSc * 0.95);
+        ring2.scale.setScalar(S.cSc * 0.90);
+        particles.scale.setScalar(S.cSc);
+
+        mainMat.color.lerp(S.tColor, ef*2);
+        mainMat.emissive.lerp(S.tEmissive, ef*2);
+        wireMat.color.lerp(S.tWire, ef*2);
+        pMat.color.lerp(S.tWire, ef*2);
+        ring1.material.color.lerp(S.tWire, ef*2);
+        ring2.material.color.lerp(S.tWire, ef*2);
+
+        mainMat.opacity = S.cOp; mainMat.transparent = S.cOp < 1;
+        wireMat.opacity = 0.12 * S.cOp;
+        pMat.opacity    = 0.7  * S.cOp;
+        ring1.material.opacity = 0.25 * S.cOp;
+        ring2.material.opacity = 0.12 * S.cOp;
+
+        updateMorphGeometry(dt);
+
+        const spd = rotSpeeds[S.section] || 0.18;
+        mesh.rotation.y += dt * spd;
+        mesh.rotation.x  = Math.sin(et * 0.3) * 0.15;
+        wireMesh.rotation.copy(mesh.rotation);
+        ring1.rotation.z += dt * 0.35; ring1.rotation.y += dt * 0.15;
+        ring2.rotation.z -= dt * 0.22; ring2.rotation.x += dt * 0.10;
+
+        // Breathe particles
+        const pa = pGeo.attributes.position.array;
+        for (let i = 0; i < N; i++) {
+            const breathe = 1 + Math.sin(pPhase[i] + et * 0.5) * 0.06;
+            pa[i*3]   = pBasePos[i*3]   * breathe;
+            pa[i*3+1] = pBasePos[i*3+1] * breathe;
+            pa[i*3+2] = pBasePos[i*3+2] * breathe;
+        }
+        pGeo.attributes.position.needsUpdate = true;
+
+        // Orbit lights
+        pointLight1.position.set(Math.cos(et*0.7)*4, 2, Math.sin(et*0.7)*4);
+        pointLight2.position.set(Math.cos(et*0.5+Math.PI)*3, Math.sin(et*0.4)*2, 2);
+
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
         colorBright: '#e8884a',
         glow:        'rgba(201,110,58,0.45)',
         glowFar:     'rgba(201,110,58,0.15)',
@@ -101,161 +368,6 @@ const ORB_THEMES = {
         label:       'MANDATE',
     },
     dashboard: {
-        color:       '#4a7aaa',
-        colorBright: '#6a9acc',
-        glow:        'rgba(74,122,170,0.50)',
-        glowFar:     'rgba(74,122,170,0.18)',
-        ring:        'rgba(74,122,170,0.40)',
-        ringDashed:  'rgba(74,122,170,0.14)',
-        label:       'STATUS',
-    },
-};
-
-// Target state — where orb WANTS to be
-const orbTarget = { x: 50, y: 50, scale: 1, opacity: 1 };
-// Current interpolated state
-const orbCurrent = { x: 50, y: 50, scale: 1, opacity: 1 };
-
-let lastSection = 'hero';
-let orbRafId = null;
-
-function applyTheme(key) {
-    if (key === lastSection) return;
-    lastSection = key;
-    const t = ORB_THEMES[key] || ORB_THEMES.hero;
-    const el = orbWrapper;
-    el.style.setProperty('--orb-color',       t.color);
-    el.style.setProperty('--orb-color-bright', t.colorBright);
-    el.style.setProperty('--orb-glow',         t.glow);
-    el.style.setProperty('--orb-glow-far',     t.glowFar);
-    el.style.setProperty('--orb-ring',         t.ring);
-    el.style.setProperty('--orb-ring-dashed',  t.ringDashed);
-
-    // Label
-    if (orbLabel) {
-        orbLabel.textContent = t.label;
-        orbLabel.classList.toggle('visible', t.label !== '');
-    }
-
-    // Entry pulse
-    if (orbVisual) {
-        orbVisual.classList.remove('entering');
-        void orbVisual.offsetWidth; // reflow
-        orbVisual.classList.add('entering');
-        setTimeout(() => orbVisual.classList.remove('entering'), 800);
-    }
-}
-
-function lerp(a, b, t) { return a + (b - a) * t; }
-
-function tickOrb() {
-    const ease = 0.07; // lower = floatier, higher = snappier
-    orbCurrent.x       = lerp(orbCurrent.x,       orbTarget.x,       ease);
-    orbCurrent.y       = lerp(orbCurrent.y,        orbTarget.y,       ease);
-    orbCurrent.scale   = lerp(orbCurrent.scale,    orbTarget.scale,   ease);
-    orbCurrent.opacity = lerp(orbCurrent.opacity,  orbTarget.opacity, ease);
-
-    if (orbWrapper) {
-        orbWrapper.style.left    = orbCurrent.x + 'vw';
-        orbWrapper.style.top     = orbCurrent.y + 'vh';
-        orbWrapper.style.setProperty('--orb-scale',   orbCurrent.scale.toFixed(4));
-        orbWrapper.style.setProperty('--orb-opacity',  orbCurrent.opacity.toFixed(4));
-    }
-
-    orbRafId = requestAnimationFrame(tickOrb);
-}
-
-function updateOrbFromScroll() {
-    const scrollY = window.scrollY;
-    const winH    = window.innerHeight;
-
-    // Section offsets
-    const secHero  = document.getElementById('hero');
-    const secKyc   = document.getElementById('kyc');
-    const secCredit= document.getElementById('credit');
-    const secUpi   = document.getElementById('upi');
-    const secDash  = document.getElementById('dashboard');
-
-    if (!secHero) return;
-
-    const heroH   = secHero.offsetHeight;
-    const kycTop  = secKyc   ? secKyc.offsetTop   : heroH;
-    const credTop = secCredit? secCredit.offsetTop : kycTop   + winH;
-    const upiTop  = secUpi   ? secUpi.offsetTop    : credTop  + winH;
-    const dashTop = secDash  ? secDash.offsetTop   : upiTop   + winH;
-    const pageH   = document.body.scrollHeight;
-
-    // ── HERO ──────────────────────────────────────
-    if (scrollY < kycTop - winH * 0.3) {
-        const heroProgress = Math.min(scrollY / (heroH * 0.6), 1); // 0→1 as hero scrolls out
-        applyTheme('hero');
-
-        // Orb stays centered in hero, slowly drifts up as hero scrolls
-        orbTarget.x       = 50;
-        orbTarget.y       = 50 - heroProgress * 8;   // drifts up slightly
-        orbTarget.scale   = 1 - heroProgress * 0.15;  // gently shrinks
-        orbTarget.opacity = 1;
-
-    // ── KYC ───────────────────────────────────────
-    } else if (scrollY < credTop - winH * 0.3) {
-        const t = Math.min((scrollY - (kycTop - winH * 0.3)) / winH, 1);
-        applyTheme('kyc');
-
-        // Orb floats to left-center, slightly above middle
-        orbTarget.x       = lerp(50, 18, smoothStep(t));
-        orbTarget.y       = lerp(42, 35, smoothStep(t));
-        orbTarget.scale   = lerp(0.85, 0.55, smoothStep(t));
-        orbTarget.opacity = 1;
-
-    // ── CREDIT ────────────────────────────────────
-    } else if (scrollY < upiTop - winH * 0.3) {
-        const t = Math.min((scrollY - (credTop - winH * 0.3)) / winH, 1);
-        applyTheme('credit');
-
-        // Orb floats to right side
-        orbTarget.x       = lerp(18, 82, smoothStep(t));
-        orbTarget.y       = lerp(35, 38, smoothStep(t));
-        orbTarget.scale   = lerp(0.55, 0.50, smoothStep(t));
-        orbTarget.opacity = 1;
-
-    // ── UPI ───────────────────────────────────────
-    } else if (scrollY < dashTop - winH * 0.3) {
-        const t = Math.min((scrollY - (upiTop - winH * 0.3)) / winH, 1);
-        applyTheme('upi');
-
-        // Orb swings back to left, slightly lower
-        orbTarget.x       = lerp(82, 20, smoothStep(t));
-        orbTarget.y       = lerp(38, 42, smoothStep(t));
-        orbTarget.scale   = lerp(0.50, 0.45, smoothStep(t));
-        orbTarget.opacity = 1;
-
-    // ── DASHBOARD ─────────────────────────────────
-    } else if (scrollY < pageH - winH * 1.1) {
-        const t = Math.min((scrollY - (dashTop - winH * 0.3)) / winH, 1);
-        applyTheme('dashboard');
-
-        // Orb retreats to top-right corner, small
-        orbTarget.x       = lerp(20, 88, smoothStep(t));
-        orbTarget.y       = lerp(42, 12, smoothStep(t));
-        orbTarget.scale   = lerp(0.45, 0.22, smoothStep(t));
-        orbTarget.opacity = lerp(1, 0.6, smoothStep(t));
-
-    // ── FOOTER — fade out ─────────────────────────
-    } else {
-        orbTarget.opacity = 0;
-    }
-}
-
-// Smooth easing (Ken Perlin's smoothstep)
-function smoothStep(t) {
-    t = Math.max(0, Math.min(1, t));
-    return t * t * (3 - 2 * t);
-}
-
-// Wire scroll → target update, rAF → render
-window.addEventListener('scroll', updateOrbFromScroll, { passive: true });
-updateOrbFromScroll(); // set initial targets
-tickOrb();             // start render loop
 
 // ═══════════════════════════════════════
 //  UPLOAD ZONE
@@ -545,8 +657,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkHealth();
     setInterval(checkHealth, 30000);
 
-    // Re-run reveal observer after DOM settles
-    setTimeout(() => {
-        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-    }, 100);
+    // Re-observe any reveals added after initial parse
+    setTimeout(observeRevealElements, 100);
 });
