@@ -160,7 +160,9 @@ observeRevealElements();
     const pointLight2 = new THREE.PointLight(0x3366ff, 2, 10);
     pointLight2.position.set(-3, -2, 2);
     scene.add(pointLight2);
-    scene.add(new THREE.DirectionalLight(0xffffff, 0.8)).position.set(0, 5, -3);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    rimLight.position.set(0, 5, -3);
+    scene.add(rimLight);
 
     // Geometry morph state
     let currentPositions = geoPositions(sphereGeo);
@@ -191,15 +193,16 @@ observeRevealElements();
         if (morphT >= 1) currentPositions = Array.from(pos);
     }
 
-    // Scroll-driven state
+    // Scroll-driven state — initialise cX/cY to hero position, not 0
+    // Hero target is screen center → world (0,0)
     const S = {
         section: 'hero',
         tX: 0, tY: 0, cX: 0, cY: 0,
         tSc: 1, cSc: 1,
         tOp: 1, cOp: 1,
-        tColor:   new THREE.Color(THEMES.hero.color),
+        tColor:    new THREE.Color(THEMES.hero.color),
         tEmissive: new THREE.Color(THEMES.hero.emissive),
-        tWire:    new THREE.Color(THEMES.hero.wire),
+        tWire:     new THREE.Color(THEMES.hero.wire),
     };
     let lastSec = '';
 
@@ -215,15 +218,13 @@ observeRevealElements();
     function lp(a, b, t) { return a + (b - a) * t; }
     function ss(t) { t = Math.max(0, Math.min(1, t)); return t*t*(3-2*t); }
 
-    // Convert screen % (0=left/top, 100=right/bottom) to Three.js world coords
-    // Camera at z=5, FOV 60 → visible height = 2*5*tan(30°) ≈ 5.774
+    // Convert screen % (0=left/top, 100=right/bottom) → Three.js world coords
+    // Camera z=5, FOV 60° → half-height = 5*tan(30°) ≈ 2.887
     function screenToWorld(xPct, yPct) {
-        const h = 2 * 5 * Math.tan(THREE.MathUtils.degToRad(30));
-        const w = h * camera.aspect;
-        // xPct 50 = center, yPct 50 = center
-        // Three.js Y+ is up, so invert: yPct 0 = top = +h/2
-        const wx = (xPct / 100 - 0.5) * w;
-        const wy = -(yPct / 100 - 0.5) * h;
+        const halfH = 5 * Math.tan(THREE.MathUtils.degToRad(30));
+        const halfW = halfH * (window.innerWidth / window.innerHeight);
+        const wx =  ((xPct / 100) - 0.5) * halfW * 2;
+        const wy = -((yPct / 100) - 0.5) * halfH * 2;  // Y flipped: screen-down = world-negative
         return { x: wx, y: wy };
     }
 
@@ -278,7 +279,6 @@ observeRevealElements();
     }
 
     window.addEventListener('scroll', updateScroll, { passive: true });
-    updateScroll();
 
     // Mouse parallax
     let mX = 0, mY = 0;
@@ -291,16 +291,26 @@ observeRevealElements();
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        updateScroll();
     });
 
     // Render loop
     const clock = new THREE.Clock();
     const rotSpeeds = { hero:0.18, kyc:0.42, credit:0.22, upi:0.30, dashboard:0.12 };
+    let firstFrame = true;
 
     function animate() {
         requestAnimationFrame(animate);
         const dt = clock.getDelta();
         const et = clock.getElapsedTime();
+
+        // On first frame: compute scroll state now that layout is ready, then snap
+        if (firstFrame) {
+            firstFrame = false;
+            updateScroll();
+            S.cX = S.tX; S.cY = S.tY; S.cSc = S.tSc; S.cOp = S.tOp;
+        }
+
         const ef = 1 - Math.pow(0.001, dt);
 
         S.cX  += (S.tX  - S.cX)  * ef * 3.5;
