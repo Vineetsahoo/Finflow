@@ -45,26 +45,21 @@ function smoothNav(id) {
 }
 
 // ═══════════════════════════════════════
-//  SCROLL REVEAL
+//  SCROLL REVEAL — animation on entry
 // ═══════════════════════════════════════
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target); // fire once, then stop watching
+            entry.target.classList.add('animated');
+            revealObserver.unobserve(entry.target);
         }
     });
-}, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0, rootMargin: '0px 0px -20px 0px' });
 
 function observeRevealElements() {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+    document.querySelectorAll('.reveal:not(.animated)').forEach(el => revealObserver.observe(el));
 }
 observeRevealElements();
-
-// Safety net — if anything is still hidden after 2s, force it visible
-setTimeout(() => {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(el => el.classList.add('visible'));
-}, 2000);
 
 // ═══════════════════════════════════════
 //  THREE.JS 3D SCENE — scroll-driven
@@ -658,5 +653,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(checkHealth, 30000);
 
     // Re-observe any reveals added after initial parse
-    setTimeout(observeRevealElements, 100);
+    setTimeout(observeRevealElements, 50);
 });

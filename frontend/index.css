@@ -206,13 +206,30 @@ body {
 /* ═══════════════════════════════════════
    REVEAL ANIMATIONS
 ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   SCROLL REVEAL — CSS animation based
+   Elements start visible, animate in on
+   .visible class added by scroll observer
+═══════════════════════════════════════ */
 .reveal {
-    opacity: 1 !important;
-    transform: none !important;
-}
-.reveal.visible {
     opacity: 1;
     transform: none;
+    animation: none;
+}
+
+/* When JS adds .animated, play the slide-up */
+.reveal.animated {
+    animation: revealSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+.reveal.animated.reveal-delay-1 { animation-delay: 0.08s; }
+.reveal.animated.reveal-delay-2 { animation-delay: 0.16s; }
+.reveal.animated.reveal-delay-3 { animation-delay: 0.24s; }
+.reveal.animated.reveal-delay-4 { animation-delay: 0.32s; }
+.reveal.animated.reveal-delay-5 { animation-delay: 0.40s; }
+
+@keyframes revealSlideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes revealUp {
@@ -460,10 +477,7 @@ body {
     min-height: 100vh; width: 100%; position: relative;
     padding: 120px 6vw; display: block; overflow: hidden;
     z-index: 1;
-    /* Solid enough to read, dark enough to not fight the 3D canvas */
-    background: rgba(15, 12, 10, 0.92);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: var(--bg-primary);
 }
 .section-inner {
     width: 100%; max-width: 1400px; margin: 0 auto; position: relative; z-index: 2;
